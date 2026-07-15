@@ -77,4 +77,4 @@ multi-surface, inbox-centric). Spiritual ancestor: Vannevar Bush's Memex (1945).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Public domain ([The Unlicense](LICENSE)). Use it, remix it, republish it — no attribution needed.
