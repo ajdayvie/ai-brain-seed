@@ -44,9 +44,9 @@ have a real, cited starter wiki within a day.
 
 Your AI tools have been quietly accumulating memory. Harvest it once:
 
-- **claude.ai memory / ChatGPT saved memory:** ask the tool to display everything it remembers about you
-  ("show me everything in your memory about me"), paste the output into a backfill conversation, and capture
-  the durable parts as inbox notes (source: "ChatGPT saved memory, exported YYYY-MM-DD").
+- **Your assistant's saved memory:** ask the tool to display everything it remembers about you ("show me
+  everything in your memory about me"), paste the output into a backfill conversation, and capture the
+  durable parts as inbox notes (source: "saved assistant memory, exported YYYY-MM-DD").
 - **Claude Code auto-memory / project memories:** review `~/.claude/projects/*/memory/` files and capture
   the durable, non-code facts.
 - Treat these as *claims to verify*, not gospel — memory features accumulate errors. Mark anything doubtful
@@ -67,7 +67,7 @@ Open the original conversation (in Claude or ChatGPT with its Brain GPT) and ask
 ### Mode B — exported-history backfill (bulk review)
 
 For large histories, export first (ChatGPT: Settings → Data Controls → Export Data →
-`conversations.json`; Claude: Settings → Privacy → export). Then, in a dedicated backfill session, begin
+`conversations.json`. Claude: Settings → Privacy → export). Then, in a dedicated backfill session, begin
 with a **read-only inventory**:
 
 > Review this exported conversation history for a brain backfill. First produce an inventory only: identify
@@ -93,17 +93,27 @@ repeated explanations, superseded plans with no reusable rationale, material alr
 AI-generated claims that were never accepted or used. But don't skip a superseded decision whose reversal
 contains a reusable lesson — capture it as a corrected/historical decision.
 
+**From ChatGPT, the same manifest flow applies.** The `Brain` GPT presents a read-only inventory and a
+capture manifest first. Once you approve that listed batch, it runs the batch as ordinary inbox captures,
+with no redundant approval for each note. It never writes into `wiki/` or `raw/`. See `docs/chatgpt.md` for
+the setup and the exact wording of the GPT rules.
+
 Work in **reviewable batches** (roughly 5–20 related sources), approve each batch explicitly, and have the
 AI report at the end of each: sources reviewed, skipped, notes created with exact paths, conflicts left for
 you, and the next unreviewed range — so a backfill can pause and resume across sessions.
 
 ## Writing backfill notes
 
-Backfill notes are ordinary inbox notes with one extra habit — record the historical source *inside* the
-note, and use the **current capture time** in the filename:
+Backfill notes are ordinary inbox notes with one extra habit. Record the historical source *inside* the
+note, and use the **current capture time** in the filename.
+
+**The self-sufficient-note rule matters most here.** A backfill note is filed later, on a machine that
+cannot open the conversation, the export, or the document it came from. **Synthesize the durable content
+into the note itself.** Record the historical source as provenance **in addition to** that content, never
+instead of it. A note whose body is a title and a date is unfileable, and it will sit in the inbox forever.
 
 ```markdown
-context: Backfill from ChatGPT conversation "<title>", originally dated YYYY-MM-DD; reviewed and captured YYYY-MM-DD.
+context: Backfill from ChatGPT conversation "<title>", originally dated YYYY-MM-DD, reviewed and captured YYYY-MM-DD.
 
 <clean durable knowledge — synthesis, not a transcript dump>
 
@@ -115,6 +125,6 @@ context: Backfill from ChatGPT conversation "<title>", originally dated YYYY-MM-
 
 Preserve exact wording only when it matters (approved copy, contract language, prompts, naming decisions,
 canonical definitions). Otherwise synthesize into concise factual markdown. One conversation usually yields
-one note; split only when a source contains clearly independent durable subjects. Backfill never makes final
+one note. Split only when a source contains clearly independent durable subjects. Backfill never makes final
 wiki filing decisions — the normal process step decides whether one capture becomes one page, several, or
 updates to existing pages.

@@ -11,30 +11,37 @@ sources: []
 
 # Tag Vocabulary — the controlled list
 
-Tags are the **subject** axis only (see the three axes in [[_conventions#The three axes]]). This is the
-canonical list: every `tags:` value on a wiki page must come from here. Adding a tag means **adding it here
-first**, then using it — never the reverse. `maintenance-pass` lints pages against this file.
+Tags are the **subject** axis only. See the three axes in [[_conventions#The three axes]].
+
+This is the canonical list. Every `tags:` value on a wiki page must come from here. Adding a tag means
+**adding it here first**, then using it. Never the reverse. The `maintenance-pass` skill lints pages against
+this file.
 
 **Tags are not the place for:**
-- **status** — `draft | stable | needs-review` go in the `status:` field, never as tags.
-- **type** — `concept | reference | source-summary | …` go in the `type:` field (so no `talk`/`source` tags).
+
+- **status** — `draft | stable | needs-review` go in the `status:` field, never as a tag.
+- **type** — `concept | reference | source-summary | ...` go in the `type:` field.
 - **identity** — `{{IDENTITY_VALUES}}` go in the `identity:` field.
 
-Keep the list small. Prefer an existing tag over a near-synonym; reach for a new one only when a real subject
-has no home here. New tags are added at process time by proposing them here first.
+Keep the list small. Prefer an existing tag over a near-synonym. Reach for a new tag only when a real subject
+has no home here. New tags are added at process time, by proposing them here first.
 
 ## Canonical tags
 
-### The brain / knowledge system
-- `brain` — this knowledge base itself, its architecture and storage.
-- `knowledge-management` — PKM concepts, methods, the library/Karpathy framing.
-- `workflow` — capture / process / pull and other procedures.
+### The brain and the knowledge system
+
+- `brain` — this knowledge base itself, its architecture and its storage.
+- `knowledge-management` — methods and concepts for personal knowledge work.
+- `workflow` — capture, process, pull, maintain, and other methods.
 
 ### Starter subjects
+
 <!-- The vocabulary grows with the brain. As real subjects appear during processing, add a tag here with a
      one-line definition, then use it. Group related tags under a heading. Delete this comment once the list
      has real entries. -->
 
-## Retired / redirected (do not use)
+## Retired and redirected (do not use)
+
 <!-- When a tag is replaced or absorbed, move it here with an arrow to its canonical replacement, e.g.:
-- `meta`, `system` → use `brain`. -->
+- `meta`, `system` → use `brain`.
+     Read the left of the arrow as the retired tag and the right as the replacement. -->
