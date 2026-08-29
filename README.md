@@ -83,14 +83,35 @@ read the docs. This works. It is slower and easier to get wrong.
 - **Process runs where the files are local.** It moves notes out of `inbox/`, so it needs real disk access.
   Use a local Claude Code or Cowork session, not a cloud runner and not a connector.
 
-## Lineage
+## Where this came from
 
-Andrej Karpathy's agent-environment framing (spec, verifier, environment) and his sketch of an
-LLM-maintained markdown wiki that replaces RAG at personal scale. A production implementation of that wiki
-idea supplied the working parts: concept-per-page, index versus log, conventions first, immutable sources.
-This design adds three things: no git, many surfaces, and an inbox that separates capture from filing. The
-spiritual ancestor is Vannevar Bush's Memex (1945). The full reasoning is in
-[docs/background.md](docs/background.md).
+This kit was not designed in the abstract. It is extracted from a **working brain that has been in daily use
+since June 2026** — captured from across several AI surfaces, compiled nightly, and pulled from during real
+work. Every rule here earned its place by breaking first. The nightly compile is ranked the way it is because
+the other route failed twice. Notes are filed from their own content because a queue of unfileable notes once
+sat in the inbox for fourteen days. The skill offer asks rarely because an earlier version would have asked
+constantly.
+
+So the seed is a **snapshot of something running**, not a proposal. It will keep changing as the original
+does.
+
+### Lineage, with credit
+
+- **Andrej Karpathy** — the agent-environment framing (spec, verifier, environment), and the sketch of an
+  LLM-maintained markdown wiki that replaces RAG at personal scale. The brain is the knowledge-base layer of
+  that environment. That idea is the seed of this whole design.
+- **The Data Garden / PlantWave implementation** — a production build of that wiki idea, and the source of
+  the working parts adopted here: concept-per-page, index versus log, conventions first, immutable sources,
+  the `outputs/` stage, frontmatter for querying, and periodic maintenance passes. This design is an
+  evolution of it, and the credit stands.
+- **Vannevar Bush's Memex** (1945) — the spiritual ancestor, with the LLM finally doing the curation Bush
+  could not automate.
+
+**What this design adds** to what it inherited: no git, so cloud sync is the versioning layer. Many surfaces
+rather than one. An inbox that separates capture from filing. Identity as metadata rather than a folder. And
+a skill library beside the wiki, so repeated methods compound the way knowledge does.
+
+The full reasoning is in [docs/background.md](docs/background.md).
 
 ## License
 

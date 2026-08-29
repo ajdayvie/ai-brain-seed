@@ -107,7 +107,14 @@ PREAMBLE = """\
 >
 > The assistant explains the system and writes nothing.
 >
-> This is the self-contained edition of the ai-brain-seed kit. Same content, no download needed.
+> This is the self-contained edition of the **ai-brain-seed** kit. Same content, no download needed.
+>
+> The kit is extracted from a working brain in daily use since June 2026, so it is a snapshot of something
+> running rather than a proposal. It descends from Andrej Karpathy's LLM-wiki idea and agent-environment
+> framing, and from the Data Garden / PlantWave implementation of that idea, which supplied
+> concept-per-page, the index-versus-log split, conventions first, and immutable sources. Vannevar Bush's
+> Memex (1945) is the spiritual ancestor. Part I carries the full reasoning.
+>
 > Everything below is addressed to the AI.
 
 ---
