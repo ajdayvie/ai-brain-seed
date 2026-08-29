@@ -8,8 +8,11 @@ sources: []
 
 # Index — what exists in the brain
 
-> Note: cross-cutting knowledge lives in `topics/`; identity-specific applied work lives in
-> `projects/<slug>/`. Use the `identity:` field, not folders, to filter by identity.
+> Cross-cutting knowledge lives in `topics/`. Identity-specific applied work lives in `projects/<slug>/`.
+> Filter by the `identity:` field, never by folder.
+
+Every page gets a line here at process time: the link, and a one-line summary. This file answers "what
+exists". `_log.md` answers "what changed".
 
 ---
 
