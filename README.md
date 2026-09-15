@@ -14,15 +14,20 @@ capture     immutable    knowledge     deliverables
 no filing)               curates
 ```
 
-Four verbs run the whole system.
+Five verbs run the whole system.
 
 - **capture** — write anything worth keeping to `inbox/`, from any surface, with no filing decision
 - **process** — an LLM compiles the inbox into a concept-per-page wiki, linked and cited. It runs nightly,
   or on demand.
 - **pull** — ask the brain a question. It answers from the wiki and cites the pages.
 - **maintain** — a lint pass over the wiki: broken links, orphan pages, contradictions, stale pages
+- **digest** — turn a session into a spoken-word script and an MP3, in `digests/`, to listen to on a drive
 
-A fifth verb works on methods rather than knowledge.
+`digests/` sits **outside** that flow on purpose. A digest is an *interface*, not a record: one explanation
+of something, shaped for ears, that ages out. The wiki holds what is true, so process never reads a digest
+and a digest is never a capture.
+
+A sixth verb works on methods rather than knowledge.
 
 - **`/brain-skill`** — turn a repeated method into a skill. The AI offers rarely, and only for a business
   process, a personalization, or a way of working with AI that you repeat. On your yes it builds the skill
@@ -45,6 +50,29 @@ backfill pass add more.
 vault folder set to Local / "Make available offline". The assistant states the full list and waits for you.
 It never signs up for an account, grants a permission, or generates a token on your behalf.
 
+## Already have a brain? Update it
+
+The kit keeps changing. A vault records the version it came from, and an update brings it forward without a
+reinstall.
+
+Open a Claude Code session that can reach your vault and say:
+
+```
+check my brain for updates
+```
+
+From a vault at 0.3.0 or later, **`/brain-update`** does the same thing and finds the kit for you.
+
+The assistant works out which version your vault is on — by its marker, or by probing for features if it
+predates version tracking — tells you what each newer version adds, and **asks before it writes anything**.
+You see a diff before any file you already have is changed.
+
+**Nothing expires.** A vault that stays where it is keeps working, and you can take one update and decline
+another. An update changes the rules and the tools. It never touches your knowledge.
+
+[CHANGELOG.md](CHANGELOG.md) says what each version changed. [UPDATES.md](UPDATES.md) is the runbook the
+assistant follows, and [migrations/](migrations/) holds one document per version step.
+
 ### Other paths
 
 **Teach me first.** To understand the system with nothing written to disk, say:
@@ -63,8 +91,11 @@ read the docs. This works. It is slower and easier to get wrong.
 
 | Path | Contents |
 |------|----------|
-| [INSTALL.md](INSTALL.md) | The guided intake. The AI reads this file and follows it. |
-| [CLAUDE.md](CLAUDE.md) / [AGENTS.md](AGENTS.md) | Thin routers. They point an assistant at `INSTALL.md`. |
+| [INSTALL.md](INSTALL.md) | The guided intake for a new brain. The AI reads this file and follows it. |
+| [UPDATES.md](UPDATES.md) | The update runbook for a brain that already exists. |
+| [migrations/](migrations/) | One document per version step, plus the contract each one follows. |
+| [CHANGELOG.md](CHANGELOG.md) / [VERSION](VERSION) | What each version changed, and the current one. |
+| [CLAUDE.md](CLAUDE.md) / [AGENTS.md](AGENTS.md) | Thin routers. They point an assistant at `INSTALL.md` or `UPDATES.md`. |
 | [STANDALONE.md](STANDALONE.md) | The whole kit in one paste-able file. Generated, so do not hand-edit it. |
 | [seed-vault/](seed-vault/) | The vault skeleton: protocol docs, wiki scaffolding, Claude Code skills and slash commands |
 | [seed-library/](seed-library/) | The skill library skeleton: the skill contract, the registry, and the per-machine install |

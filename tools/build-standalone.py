@@ -23,16 +23,28 @@ VAULT_FILES = [
     "wiki/_tags.md",
     "wiki/_index.md",
     "wiki/_log.md",
+    "digests/_catalog.md",
     ".claude/INSTALL.md",
+    ".claude/VERSION.md",
     ".claude/skills/capture-to-inbox/SKILL.md",
     ".claude/skills/process-inbox/SKILL.md",
     ".claude/skills/maintenance-pass/SKILL.md",
     ".claude/skills/skill-library/SKILL.md",
+    ".claude/skills/audio-digest/SKILL.md",
+    ".claude/skills/brain-update/SKILL.md",
     ".claude/commands/capture.md",
     ".claude/commands/process.md",
     ".claude/commands/pull.md",
     ".claude/commands/maintain.md",
     ".claude/commands/brain-skill.md",
+    ".claude/commands/digest.md",
+    ".claude/commands/brain-update.md",
+]
+
+# Fenced as python rather than markdown. The digest renderer is the only script
+# the vault carries.
+VAULT_SCRIPTS = [
+    (".claude/scripts/render-digest.py", "python"),
 ]
 
 # The skill library, written beside the vault. `skills/` starts empty, so only the
@@ -64,6 +76,10 @@ XREFS = [
     (r"If you have this document but not the repository files, use `STANDALONE\.md`\."
      r" It embeds every template\.\n+", ""),
     (r"This repository holds everything you need\.", "This document holds everything you need."),
+    # The update runbook is not embedded here. Point at the repository instead.
+    (r"stop and read `UPDATES\.md` instead",
+     "stop, and use `UPDATES.md` from the kit repository at "
+     "<https://github.com/ajdayvie/ai-brain-seed> instead"),
     (r"if this repository was cloned, make sure", "make sure"),
     (r"\*\*Do not write outside this repository\*\*", "**Do not write any file**"),
 
@@ -107,7 +123,12 @@ PREAMBLE = """\
 >
 > The assistant explains the system and writes nothing.
 >
-> This is the self-contained edition of the **ai-brain-seed** kit. Same content, no download needed.
+> This is the self-contained edition of the **ai-brain-seed** kit, version {VERSION}. Same content, no
+> download needed.
+>
+> **It installs a new brain.** To update one that already exists, use `UPDATES.md` and `migrations/` from
+> the repository at <https://github.com/ajdayvie/ai-brain-seed> — those read the vault you already have and
+> patch it, which no single-paste file can do.
 >
 > The kit is extracted from a working brain in daily use since June 2026, so it is a snapshot of something
 > running rather than a proposal. It descends from Andrej Karpathy's LLM-wiki idea and agent-environment
@@ -149,12 +170,17 @@ PART_II_NOTE = """\
 >   inbox/.keep   raw/.keep   outputs/.keep
 >   wiki/_conventions.md  wiki/_tags.md  wiki/_index.md  wiki/_log.md
 >   wiki/topics/.keep  wiki/projects/.keep  wiki/archive/.keep
->   .claude/INSTALL.md
+>   digests/_catalog.md   digests/heard/.keep
+>   .claude/INSTALL.md   .claude/VERSION.md
+>   .claude/scripts/render-digest.py
 >   .claude/skills/capture-to-inbox/SKILL.md
 >   .claude/skills/process-inbox/SKILL.md
 >   .claude/skills/maintenance-pass/SKILL.md
 >   .claude/skills/skill-library/SKILL.md
+>   .claude/skills/audio-digest/SKILL.md
+>   .claude/skills/brain-update/SKILL.md
 >   .claude/commands/capture.md  process.md  pull.md  maintain.md  brain-skill.md
+>   .claude/commands/digest.md  brain-update.md
 >
 > <library>/
 >   README.md  CONVENTIONS.md  INSTALL.md  registry.md
@@ -190,7 +216,10 @@ def install_body() -> str:
 
 
 def main() -> None:
-    parts: list[str] = [PREAMBLE]
+    # A plain replace, not str.format: the preamble also carries literal
+    # `{{PLACEHOLDER}}` braces that format() would eat.
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    parts: list[str] = [PREAMBLE.replace("{VERSION}", version)]
 
     background = (ROOT / "docs/background.md").read_text(encoding="utf-8")
     parts.append("\n---\n\n# Part I — Background\n\n"
@@ -206,6 +235,9 @@ def main() -> None:
     for rel in VAULT_FILES:
         content = (ROOT / "seed-vault" / rel).read_text(encoding="utf-8")
         parts.append(f"\n## File: `{rel}`\n\n````markdown\n{content}````\n")
+    for rel, lang in VAULT_SCRIPTS:
+        content = (ROOT / "seed-vault" / rel).read_text(encoding="utf-8")
+        parts.append(f"\n## File: `{rel}`\n\n````{lang}\n{content}````\n")
 
     parts.append("\n---\n\n# Part IV — Library file templates\n\n"
                  "Write each file at the stated path, relative to the **library** root, which sits beside\n"

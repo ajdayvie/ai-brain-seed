@@ -139,6 +139,22 @@ is still sitting unfiled.
 
 Pick the cadence you will actually keep.
 
+## Maintain has a cadence too, and it is slower
+
+The compile is the job that must be regular. **`/maintain` is the one that must merely happen** — monthly is
+plenty for most vaults.
+
+It does two things on a clock. It lints the wiki, which matters more the more pages there are. And it moves
+digests older than 60 days out of the `digests/` root into `digests/heard/`. **Nothing is deleted.**
+
+**Skipping it costs nothing immediate.** A stale link stays a stale link, and an aged digest just sits in the
+root. So do not schedule it alongside the nightly compile. Run it by hand when you are deliberately looking
+at the brain rather than using it, which is also the moment a skill sweep belongs.
+
+If you do want it scheduled, use the same option you picked above, on a monthly trigger. `/maintain` asks
+questions — contradictions and skill candidates need your judgment — so an unattended run leaves those in the
+report and fixes only what is safe.
+
 ## Whichever option: verify the loop monthly
 
 Open `wiki/_log.md` about once a month and check two things.

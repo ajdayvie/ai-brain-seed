@@ -26,8 +26,8 @@ Nothing reports this. `registry.md` is what makes it visible.
 
 ## The command is `/brain-skill`
 
-Four verbs move knowledge: capture, process, pull, maintain. **`/brain-skill` turns a repeated method into a
-skill.** It is backed by a vault skill named `skill-library`.
+Five verbs move knowledge: capture, process, pull, maintain, digest. **`/brain-skill` turns a repeated
+method into a skill.** It is backed by a vault skill named `skill-library`.
 
 The command is named `brain-skill` and not `skill` so it does not collide with other skill-building commands
 you may already have installed.

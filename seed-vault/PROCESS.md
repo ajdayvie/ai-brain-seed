@@ -81,7 +81,7 @@ command name avoids a collision with other skill-building commands you may alrea
 
 Built skills live in a **library**, a folder beside the vault in the same synced storage. It holds the one
 master copy of each skill and the instructions for installing it. It sits beside the vault, not inside it,
-because a tool is not knowledge. The one exception is the four brain skills, which stay in the vault so the
+because a tool is not knowledge. The one exception is the six brain skills, which stay in the vault so the
 vault keeps installing itself.
 
 ### When the AI will offer
@@ -164,6 +164,56 @@ description, on demand. ChatGPT has no equivalent, so you reach a method in a cu
 Its instructions are a **copy** of the master, and that copy goes stale the day you edit the master. Nothing
 on either side reports it. `<library>/registry.md` names every ChatGPT carrier and the date it was last
 refreshed, so it is your refresh list.
+
+## Digests — the brain, out loud
+
+Some things are worth understanding away from a screen. **`/digest`** turns the hard content of a session
+into a **spoken-word script plus an MP3**, written to `digests/`. Play it on a drive or a walk.
+
+It is not a session summary. A summary says "we decided X". A digest explains what X is and why it beat Y,
+slowly enough to follow with your eyes on the road. It runs 600 to 900 words, which lands near four to six
+minutes.
+
+**A digest is an interface, not a record.** The wiki holds what is true. A digest holds one explanation of
+it, shaped for ears. Three things follow, and all three matter:
+
+| Rule | Why |
+|---|---|
+| A digest is **not** a capture | If the content is durable, capture it separately. A spoken restatement is not a source. |
+| **Process never reads `digests/`** | Compiling lossy prose into the wiki would poison the source of truth. |
+| It is **never offered** to you | You ask for it. An offer that fires in normal use is noise. |
+
+It replies with **one line** and stops — no preview, no summary, no follow-up. That is the point. You called
+it so the session would not be interrupted.
+
+**Retention.** Digests older than 60 days move to `digests/heard/` on the next `/maintain`. **Nothing is
+deleted.** That folder grows without bound, and each MP3 is about two megabytes, so a hundred digests is
+roughly two hundred megabytes of synced storage. Know that cost and decide for yourself.
+
+**Setup.** The MP3 render needs `edge-tts` (`pip install edge-tts`) and a network connection. FFmpeg is
+optional — it is what measures the real runtime. Without either, `/digest` still writes the script and marks
+the audio as missing. The markdown is the artifact.
+
+**Playing one.** On the phone, open the file and ask your assistant to read it aloud from the marker
+comment. Or play the MP3 from the Dropbox app, hands-free.
+
+## Updating the brain
+
+This vault was built from the **ai-brain-seed** kit, and the kit keeps changing. The version you are on is
+in `.claude/VERSION.md`.
+
+Run **`/brain-update`** from any Claude Code session that can reach the vault. It reports the version you
+are on, what each newer version adds, and how long each would take. **Then it stops and asks.** Nothing is
+written until you say yes, and you see a diff before any file you already have is changed.
+
+**Nothing expires.** A vault that stays where it is keeps working. You can take one update and decline
+another.
+
+Two things it will never do: run git in this vault, or touch `wiki/`, `inbox/`, `raw/`, `outputs/`, or
+`digests/`. An update changes the rules and the tools. It never changes your knowledge.
+
+After an update, **each of your other machines still needs the copy-install re-run.** The vault files sync.
+The `~/.claude/` copies do not.
 
 ## Backfilling existing context
 

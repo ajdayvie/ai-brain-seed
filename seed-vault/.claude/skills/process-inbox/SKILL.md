@@ -51,4 +51,8 @@ For each note in `<brain>/inbox/`:
 - Never edit `raw/`. Never fabricate a fact or a source.
 - Never invent a tag. Propose an addition to `wiki/_tags.md` instead.
 - Never duplicate a cross-cutting fact across pages. Link the canonical page.
+- **Never read `digests/`.** It is not part of the inbox and it is not a source. A digest is a lossy spoken
+  restatement written for ears, and compiling one into the wiki puts prose that was never the source into
+  the source of truth. If a digest holds something durable that was never captured, the fix is a real
+  capture note, not a filing of the digest. See `SCHEMA.md` §6b step 8.
 - Never run git in this vault.

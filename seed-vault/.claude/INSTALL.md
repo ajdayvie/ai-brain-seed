@@ -50,13 +50,17 @@ cp -R "$b/.claude/commands/." "$HOME/.claude/commands/"
 cp -R "$b/.claude/skills/."   "$HOME/.claude/skills/"
 ```
 
-That installs 5 commands (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`) and 4 skills
-(`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`).
+That installs 7 commands (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`, `/digest`,
+`/brain-update`) and 6 skills (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`,
+`audio-digest`, `brain-update`).
 
 The copy overwrites files of the same name. It does not delete anything else in `~/.claude/`.
 
+**`.claude/scripts/` is deliberately not copied.** The `audio-digest` skill calls `render-digest.py` at its
+vault path, so the script stays in one place and a change to it needs no reinstall.
+
 **The skill library is a second, separate install.** Its runbook is `<library>/INSTALL.md`, in the library
-folder beside the vault. **This runbook does not cover it.** These 4 skills are the brain skills, and they
+folder beside the vault. **This runbook does not cover it.** These 6 skills are the brain skills, and they
 stay in the vault so the vault keeps installing itself.
 
 ---
@@ -81,6 +85,24 @@ back to searching the session's directories for one holding both `SCHEMA.md` and
 fallback works inside the vault and fails outside it. Set it.
 
 If `~/.claude/settings.json` already exists, merge the `env` block into it. Do not replace the file.
+
+---
+
+## Optional: the digest renderer
+
+`/digest` always writes its script. The **MP3** needs one Python package, installed once per machine:
+
+```bash
+pip install edge-tts
+```
+
+It is free, needs no API key, and needs a network connection when a digest is rendered.
+
+**FFmpeg is optional.** `render-digest.py` calls `ffprobe` to measure the real length of the MP3. Without
+it the render still works, and the runtime is recorded as unknown rather than guessed.
+
+Skip both and `/digest` still works. It sets `audio: none` and says so. **The markdown is the artifact. The
+MP3 is a convenience.**
 
 ---
 
@@ -124,8 +146,8 @@ To fix any drift, re-run the install commands above. The vault always wins.
 
 ## Verify
 
-Open a new Claude Code session and confirm all five commands are offered: `/capture`, `/process`, `/pull`,
-`/maintain`, and `/brain-skill`.
+Open a new Claude Code session and confirm all seven commands are offered: `/capture`, `/process`, `/pull`,
+`/maintain`, `/brain-skill`, `/digest`, and `/brain-update`.
 
 Then run a real capture. `/capture test note` must write a file into `<vault>/inbox/` and report the full
 path. If it writes into the current project instead, `BRAIN_DIR` is not set or not readable.
@@ -136,10 +158,24 @@ path. If it writes into the current project instead, `BRAIN_DIR` is not set or n
 
 | Covered | Not covered |
 |---|---|
-| The 5 command files in `.claude/commands/` | `SCHEMA.md`, `wiki/_conventions.md`, `wiki/_tags.md`. Sync carries those, and no install is involved. |
-| The 4 skill folders in `.claude/skills/` | `BRAIN_DIR` in `~/.claude/settings.json`. Set once per machine, by hand. |
+| The 7 command files in `.claude/commands/` | `SCHEMA.md`, `wiki/_conventions.md`, `wiki/_tags.md`. Sync carries those, and no install is involved. |
+| The 6 skill folders in `.claude/skills/` | `BRAIN_DIR` in `~/.claude/settings.json`. Set once per machine, by hand. |
+| | `.claude/scripts/`. The skills call it at its vault path, so it is never copied. |
+| | `edge-tts`, for the `/digest` MP3. One `pip install` per machine. |
 | | The skill library. It installs separately, per `<library>/INSTALL.md`. |
 | | The instruction block on the Cowork, chat, and ChatGPT surfaces. Each is configured in its own app. |
 
 **WARNING:** reinstalling does not fix a wrong `BRAIN_DIR`. A skill that resolves the wrong vault writes
 notes into the wrong folder and reports success. Check the path in the verify step above.
+
+---
+
+## Updating the vault itself
+
+A reinstall copies the vault's **current** files to this machine. It does not bring in anything new from the
+kit the vault was built from.
+
+That is a separate job. `VERSION.md` beside this file records the version. Run **`/brain-update`** to check
+the kit for newer ones and apply only what the owner approves. The rules are in `SCHEMA.md` §13.
+
+**An update adds files under `.claude/`, so every machine needs this runbook re-run afterward.**

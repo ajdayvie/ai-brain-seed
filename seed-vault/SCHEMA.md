@@ -30,6 +30,9 @@ surfaces. Any sync product that does both would work.
 - `wiki/projects/<slug>/` — active work. It pulls from topics. Move the learning back to topics when the work ends.
 - `wiki/archive/` — finished or dormant projects.
 - `outputs/<project>/drafts/` then `outputs/<project>/` — deliverables. Code outputs go in their own repo, not here.
+- `digests/` — **volatile.** Spoken-word audio digests, a script plus a pre-rendered MP3, written for
+  listening on the go. Not knowledge, not a source, not a deliverable: an *interface*. See §6f. It sits
+  outside the golden flow on purpose. `/process` never reads it, and nothing in it is immutable.
 
 ## 4. Identity is metadata
 
@@ -98,6 +101,9 @@ native disk access to the vault. Step 3 deletes the note from `inbox/`, and that
    bad filing. Equally, never let an unreachable pointer strand a note that has real content. A note carried
    more than twice is a bug in the filing, not a safe outcome.
 7. Report what you filed and what you left.
+8. **Never read `digests/`.** A digest is a lossy spoken restatement written for ears. Compiling one into
+   the wiki would put prose that was never the source into the source of truth. If a digest holds something
+   durable that was never captured, the fix is a real capture note per §6a, not a filing of the digest.
 
 ### 6c. PULL (query the brain)  [command: /pull]
 
@@ -109,6 +115,10 @@ durable, offer to capture it.
 Triggered by `/maintain` or by "run a maintenance pass". Scan for broken wikilinks, orphan pages,
 contradictions, stale pages, off-vocabulary tags, and invalid frontmatter. Report the findings, apply safe
 fixes, list the contradictions for the owner to decide, and append a `maintenance` entry to `_log.md`.
+
+**Maintain also owns digest retention.** Move any file in the `digests/` root older than **60 days** into
+`digests/heard/`, markdown and MP3 together. **Nothing is deleted.** This is a file move by age, not a read:
+the lint checks in this section never open a digest and never judge its content.
 
 ### 6e. SKILL (a repeatable method -> a skill)  [skill: skill-library]
 
@@ -138,6 +148,38 @@ declined, and a declined row carries the reason.
 
 Read `<library>/CONVENTIONS.md` for where a master lives and how far a skill reaches. This file does not
 restate it.
+
+### 6f. DIGEST (a session -> a listenable script and an MP3)  [skill: audio-digest]
+
+Triggered by `/digest`, by "make an audio digest", or by "record that for the car". **Never offered
+proactively.** An offer that fires in normal operation is noise, and it trains the owner to ignore the
+channel.
+
+**A digest is an interface, never a record.** The wiki holds what is true. A digest holds one explanation of
+it, shaped for ears, that ages out. It is **not** a capture — durable knowledge still goes to `inbox/` via
+§6a, separately, and only if the owner asks.
+
+1. Take the substantive content of the session: the reasoning, the trade-offs, and the numbers. **Not a list
+   of what happened.** A summary says "we decided X". A digest explains what X is and why it beat Y, slowly
+   enough to follow with your eyes on the road. Pick 2 to 4 ideas and teach them properly.
+2. Write a **spoken-word script**, 600 to 900 words, to `digests/YYYY-MM-DD-HHMM-<slug>.md`. No bullets,
+   tables, headings, links, file paths, or code identifiers in the body. Numbers said in words. Internal
+   scaffolding — agent names, branches, tool names — stripped. The footing of every claim said out loud.
+   The full spec is in the skill.
+3. Render the MP3 beside it with `.claude/scripts/render-digest.py` (edge-tts: free, no API key, needs a
+   network connection). Record the **measured** runtime in frontmatter, never an estimate. If the render
+   fails, set `audio: none` and carry on. The markdown is the artifact.
+4. Append one line to `digests/_catalog.md`, written for how the owner would ask for it out loud.
+5. Reply with **one line** and stop. No preview, no summary, no follow-up. The whole point is not
+   interrupting the session.
+
+**Retention:** the `digests/` root moves to `heard/` at 60 days, and then it is kept. **Nothing is deleted.**
+`/maintain` does the move (§6d). The skill itself never moves and never deletes anything.
+
+**Playback:** open the file and read the body aloud **verbatim, from the marker comment** — never summarize
+it. That instruction lives inside the file because claude.ai and Claude desktop discard the MCP
+`instructions` field, and connector review forbids behavioral steering in a tool description. The file is the
+only channel that reliably reaches a phone. For hands-free, play the MP3 from the sync app.
 
 ## 7. Index and log
 
@@ -215,7 +257,7 @@ vault changes.
 
 | Surface | Mechanism | Verbs |
 |---|---|---|
-| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain |
+| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain, digest |
 | Cowork / Claude desktop | A Project pointed at the vault, carrying a short instruction block | capture, process, pull |
 | claude.ai chat, web and phone | Dropbox connector, plus the same instruction block in a Project | capture, pull |
 | ChatGPT | A private custom GPT named `Brain` with the Dropbox app enabled | capture, pull, and process only with an approved plan |
@@ -245,11 +287,12 @@ master, and the owner refreshes it by hand.
 - Never edit `raw/`. Never fabricate a fact or a source.
 - Never duplicate a cross-cutting fact across topics or projects. Link the canonical page.
 - Never invent a tag. Propose an addition to `wiki/_tags.md` instead.
+- Never compile a digest into the wiki, and never let a digest stand in for a capture (§6f).
 - Never run git in this vault.
 
 ## 12. Skills and install
 
-The five commands and the four skills live in `<vault>/.claude/`. **That copy is the source of truth.** Each
+The seven commands and the six skills live in `<vault>/.claude/`. **That copy is the source of truth.** Each
 machine installs them by copy into `~/.claude/`. Never edit the installed copy. An edit there is invisible to
 every other machine, and the next install destroys it.
 
@@ -274,11 +317,33 @@ there. This file does not restate it.
 bug. When the same name exists in two stores, both load, and which one wins is ambiguous. Nothing reports
 this.
 
-The four brain skills — `capture-to-inbox`, `process-inbox`, `maintenance-pass`, and `skill-library` — stay
-in the vault. They require the brain to exist, and **the vault must stay self-installing**. Point a session
-at `<vault>/.claude/INSTALL.md` and the brain works.
+The six brain skills — `capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`,
+`audio-digest`, and `brain-update` — stay in the vault. They require the brain to exist, and **the vault
+must stay self-installing**. Point a session at `<vault>/.claude/INSTALL.md` and the brain works.
 
 `<library>/CONVENTIONS.md` is the binding contract for the library: where a master lives, how far a skill
 reaches, the four stores, provenance, packaging, and what is not a skill. `<library>/INSTALL.md` is the
 per-machine install runbook for the library, and it is a **second install, separate from this vault's
 `.claude/INSTALL.md`**.
+
+## 13. Updating this vault  [skill: brain-update]
+
+This vault was built from a version of the **ai-brain-seed** kit, and the kit keeps changing. The version is
+recorded in `.claude/VERSION.md`, together with every update applied since.
+
+Triggered by `/brain-update`, or by "check my brain for updates". **Never offered proactively**, and never
+run on a schedule. An update is the owner's choice.
+
+1. Fetch the kit into a scratch folder **outside this vault**, or use a clone the session already has.
+2. Read the kit's `UPDATES.md` and follow it. That runbook is authoritative for the whole job: it works out
+   this vault's version, picks the migrations, and holds the safety contract.
+3. Apply only the migrations the owner says yes to, in ascending order, one at a time.
+4. Reinstall the `~/.claude/` copies on this machine, and name the owner's other machines as a to-do.
+5. Record the result in `.claude/VERSION.md` and append a `maintenance` line to `wiki/_log.md`.
+
+**Three rules bind every update.** Never run git in this vault, and never leave a `.git` folder here — clone
+the kit somewhere else. Never overwrite a file the owner has edited: a migration edits by anchor, and a
+missing anchor stops the step rather than guessing a location. Never touch `wiki/` page content, `inbox/`,
+`raw/`, `outputs/`, `digests/`, or the library's `skills/`.
+
+**Nothing expires.** A vault that stays at its installed version keeps working.

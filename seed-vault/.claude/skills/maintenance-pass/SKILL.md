@@ -53,14 +53,21 @@ and they may have changed since the last pass.
      proposals in the findings, per `SCHEMA.md` §6e and §9. **Never act on one without the owner's yes.** On
      a yes, hand off to the **skill-library** skill in build mode.
 
-2. Report the findings grouped by category, with page paths.
-3. Apply the safe fixes: broken links, missing frontmatter fields, orphans relinked into `_index.md`, and
+2. **Move aged digests.** Any file in the `digests/` root older than **60 days** moves into
+   `digests/heard/`, the markdown and its MP3 together. **Nothing is deleted, ever.** This is a file move by
+   age: do not open a digest, do not judge its content, and do not lint it. `digests/` is not part of the
+   wiki, and nothing in it is a source. Report how many moved. See `SCHEMA.md` §6d and §6f.
+
+3. Report the findings grouped by category, with page paths.
+4. Apply the safe fixes: broken links, missing frontmatter fields, orphans relinked into `_index.md`, and
    retired tags remapped to their canonical form. Do NOT silently resolve a contradiction. Do NOT invent a
    new canonical tag. Propose vocabulary additions to `wiki/_tags.md` and list both for the owner.
-4. Update `wiki/_index.md` if needed. Append a `maintenance` entry to `wiki/_log.md`.
+5. Update `wiki/_index.md` if needed. Append a `maintenance` entry to `wiki/_log.md`.
 
 ## Hard rules
 
 - Never edit `raw/`. It is immutable, and a stale source is not a defect to fix.
 - Never delete a page to resolve a finding. Propose it and let the owner decide.
+- Never delete a digest or its MP3. `heard/` is an archive, not a staging area for deletion.
+- Never lint, edit, or compile anything in `digests/`. The retention move is the only thing you do there.
 - Never run git in this vault.

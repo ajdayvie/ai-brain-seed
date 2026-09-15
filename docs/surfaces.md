@@ -6,7 +6,7 @@ files, and an instruction to read `SCHEMA.md` and `wiki/_conventions.md` and fol
 
 | Surface | Mechanism | Verbs | Notes |
 |---|---|---|---|
-| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain | The primary surface. Owns process and maintain. |
+| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain, digest | The primary surface. Owns process, maintain, and digest. |
 | Cowork / Claude desktop | A Project pointed at the vault, carrying a short instruction block | capture, process, pull | Can run the Option A scheduled task. |
 | claude.ai chat, web and phone | Dropbox connector, plus the same instruction block in a Project | capture, pull | No process. |
 | ChatGPT | A private custom GPT named `Brain` with the Dropbox app enabled | capture, pull, and process only with an approved plan | Never upload vault files as GPT Knowledge. |
@@ -24,9 +24,13 @@ The vault holds the source of truth for the skills and commands:
 ~/.claude/           INSTALLED COPY. Never edit. Overwritten on every install.
 ```
 
-The vault ships four skills (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`) and
-five slash commands (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`). They install into
-`~/.claude/` by copy, so they work from **any** project directory, not only from inside the vault.
+The vault ships six skills (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`,
+`audio-digest`, `brain-update`) and seven slash commands (`/capture`, `/process`, `/pull`, `/maintain`,
+`/brain-skill`, `/digest`, `/brain-update`). They install into `~/.claude/` by copy, so they work from
+**any** project directory, not only from inside the vault.
+
+`.claude/scripts/` is not copied. The `audio-digest` skill calls `render-digest.py` at its vault path, so
+a change to that script needs no reinstall.
 
 **Never edit the installed copy.** An edit in `~/.claude/` is invisible to every other machine, and the next
 install destroys it. Change the vault copy and reinstall.
@@ -173,6 +177,35 @@ Four limits are worth stating plainly, because they are easy to overclaim.
 For the rest — where a master lives, how far it reaches, the one-store rule, junction versus copy,
 provenance, and the packaging traps — read `docs/skills.md` and `<library>/CONVENTIONS.md`. Do not restate
 those rules in a client's instructions. Point at them.
+
+## Digest reach — writing one, and listening to one
+
+Writing a digest and playing one are different jobs, and they land on different surfaces.
+
+| Surface | Write a digest | Play one |
+|---|---|---|
+| Claude Code (local) | Yes, script and MP3. It owns this verb. | Not the point. |
+| Cowork / Claude desktop | Yes, if it can run the script. Otherwise the markdown only, with `audio: none`. | Yes, either way. |
+| claude.ai chat, web and phone | Markdown only, through the connector. No MP3 — there is no shell. | **Yes. This is the listening surface.** |
+| ChatGPT | Markdown only, same reason. | Yes, read aloud from the file. |
+
+**The chat and ChatGPT clients ship wired for capture and pull only.** Writing a digest from those surfaces
+is possible, not configured: the owner asks for it in so many words, and gets the markdown without an MP3.
+Claude Code owns this verb, and that is where it belongs.
+
+**Reading one aloud on the phone.** Open the file and read the body **verbatim from the marker comment**.
+Never summarize it — the script is already the summary, and summarizing it again strips the reasoning that
+is the whole point.
+
+That instruction lives **inside the file**, as an HTML comment above the body. It is there because claude.ai
+and Claude desktop silently discard the MCP `instructions` field, and connector review forbids behavioral
+steering in a tool description. The inside of the file is the only channel that reliably reaches a phone.
+
+**Hands-free, play the MP3 from the Dropbox app instead.** It needs no assistant and no network beyond the
+sync.
+
+`digests/_catalog.md` is the index, newest first, and each entry's `about:` line is written for how the
+owner would ask for it out loud — *"the one about the server thing"*.
 
 ## The rules that span all surfaces
 

@@ -34,6 +34,11 @@ This repository holds everything you need.
 
 Read `docs/background.md` before you teach or build. You cannot install what you do not understand.
 
+**This document is for a brain that does not exist yet.** If the owner already has one and wants the newer
+features, stop and read `UPDATES.md` instead. It probes the existing vault, works out its version, and
+applies only the migrations the owner approves. Running this intake against a live vault would overwrite
+their protocol files.
+
 If you have this document but not the repository files, use `STANDALONE.md`. It embeds every template.
 
 ---
@@ -43,7 +48,7 @@ If you have this document but not the repository files, use `STANDALONE.md`. It 
 Trigger: the owner says `teach me how the brain works`, or asks to understand the system before any setup.
 
 Explain. Write nothing. Cover, in this order: the problem, the claim, the method behind the design, the
-golden flow, the four verbs, the three classification axes, what daily use feels like, and what an install
+golden flow, the five verbs, the three classification axes, what daily use feels like, and what an install
 would ask of them. Answer questions from `docs/background.md` and `seed-vault/SCHEMA.md`.
 
 Offer to run the install when they are ready. Do not write a file until they say yes.
@@ -61,8 +66,10 @@ each. Keep the whole thing under about 400 words.
    plain markdown in the owner's own storage.
 3. **The golden flow.** `inbox/` to `raw/` to `wiki/` to `outputs/`. Capture is fast and makes no filing
    decision. Process compiles the inbox into pages and moves each source note to `raw/`, which is immutable.
-4. **The four verbs.** capture, process, pull, maintain. Four verbs move knowledge, and `/brain-skill` turns
-   a repeated method into a skill that installs to the surfaces the owner uses.
+4. **The five verbs.** capture, process, pull, maintain, digest. The first four move knowledge. **Digest**
+   turns a session into a spoken-word script and an MP3 to listen to later, which is an interface onto the
+   knowledge rather than a record of it. `/brain-skill` is separate again: it turns a repeated method into a
+   skill that installs to the surfaces the owner uses.
 5. **What daily use feels like.** Capture freely from any surface. The compile runs nightly, or on a cadence
    they choose. Pull answers with citations to pages.
 
@@ -151,8 +158,12 @@ You choose the two nightly values in step 8. Come back and fill them in if the o
 
 The vault's `.claude/` folder is the source of truth for the skills and the slash commands. Cloud sync
 carries it to every machine. Each machine gets an installed copy under `~/.claude/`. The install covers
-**4 skills** (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`) and **5 commands**
-(`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`).
+**6 skills** (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`, `audio-digest`,
+`brain-update`) and **7 commands** (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`,
+`/digest`, `/brain-update`).
+
+`.claude/scripts/` is not copied. The `audio-digest` skill calls `render-digest.py` at its vault path, so
+it lives in one place.
 
 Read `<vault>/.claude/INSTALL.md` and follow it on this machine. It covers the copy commands for Windows and
 for macOS and Linux, the optional drift check, and how to verify the install.
@@ -168,6 +179,16 @@ Two points from that runbook that you must get right.
 
 A protocol change needs no reinstall. Editing `SCHEMA.md` reaches every machine and every surface through
 cloud sync. Reinstall only when a skill file itself changes.
+
+**One optional dependency: `edge-tts`, for the `/digest` MP3.** Tell the owner the command
+(`pip install edge-tts`) and let them run it. **Do not install software on their machine.** It is free and
+needs no API key. Without it `/digest` still writes the script and sets `audio: none` — the markdown is the
+artifact, the MP3 is a convenience. FFmpeg is optional on top of that: `ffprobe` is what measures the real
+runtime, and without it the runtime is recorded as unknown rather than guessed.
+
+**Also fill in `<vault>/.claude/VERSION.md`.** It records the seed version this vault was built from, and
+`/brain-update` reads it later to work out what is missing. Set `seed-version:` from the kit's `VERSION`
+file, and `installed:` to today.
 
 **The library is a second, separate install.** Its runbook is `<library>/INSTALL.md`. Do not run it now. The
 library's `skills/` folder ships empty, so on day one there is nothing to install from it.
@@ -187,6 +208,9 @@ loop is the whole system.
 2. **Process.** Run `/process`. Confirm that a wiki page is built with valid frontmatter, that the note moved
    to `raw/`, and that `_index.md` and `_log.md` are updated.
 3. **Pull.** Ask: "when was this brain installed?" Confirm that the answer cites the new page.
+4. **Digest**, only if the owner installed `edge-tts`. Run `/digest`. Confirm that one script lands in
+   `digests/`, that an MP3 sits beside it, that `_catalog.md` gained a line, and that the reply was **one
+   line**. Delete the test digest afterward and say that you did.
 
 If a step fails, fix the cause before you go on.
 
@@ -317,7 +341,11 @@ Tell them the rule: a modest seed plus steady capture beats a large stale import
 Close by telling the owner, in plain language:
 
 - Where the vault is, and where the library is.
-- The four verbs, and how to invoke each one on each surface they set up.
+- The five verbs, and how to invoke each one on each surface they set up.
+- That `/digest` writes a spoken-word script and an MP3 to `digests/`, that it is **not** a capture, that
+  the compile never reads that folder, and that it is never offered — they ask for it.
+- That the kit keeps changing, and **`/brain-update`** checks for newer versions and applies only what they
+  approve. Nothing expires. Their version is recorded in `.claude/VERSION.md`.
 - That the AI offers to build a skill when a capture is a repeatable method, and during a maintenance pass,
   and that nothing is built without their yes. `/brain-skill` sweeps for one on demand.
 - When the compile runs, or when their reminder fires.

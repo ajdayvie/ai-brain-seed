@@ -19,6 +19,9 @@ rules).** They are binding, they may have changed, and this file deliberately do
 - **Three axes, three mechanisms.** Lifecycle goes to folders. Identity goes to the `identity:` field.
   Subject goes to tags and links from the controlled vocabulary in `wiki/_tags.md`. Never make folders carry
   subject. Never make tags carry status, type, or identity. The canonical rule is in `wiki/_conventions.md`.
+- **Digests are an interface, not a record.** `/digest` writes a spoken-word script and an MP3 to
+  `digests/`. It is **not** a capture, `/process` never reads that folder, and it is never offered
+  proactively. See the Digests section below.
 - **No git.** Dropbox handles sync and version history. Never run git commands in this vault.
 
 ## Capture prompting
@@ -52,10 +55,32 @@ Read them there.
 When the owner asks something the brain might know, answer from `wiki/` and cite the pages you used. If the
 wiki does not cover it, say so. If the answer is durable, offer to capture it.
 
+## Digests
+
+`/digest` turns the substantive content of a session into a **spoken-word script plus an MP3**, written to
+`digests/`, for listening to later. The rules are in `SCHEMA.md` §6f. Read them there.
+
+Four things that are easy to get wrong:
+
+- **It is not a session summary.** A summary says "we decided X". A digest explains what X is and why it
+  beat Y, slowly enough to follow while driving.
+- **It is not a capture.** Durable knowledge still goes to `inbox/`. Offer that separately, after, and only
+  at a stopping point.
+- **`/process` never reads `digests/`.** A lossy spoken restatement must never reach the source of truth.
+- **Never offer a digest proactively.** Wait to be asked. Reply with one line and stop.
+
+## Updating this vault
+
+This vault was built from the **ai-brain-seed** kit. Its version is in `.claude/VERSION.md`. `/brain-update`
+checks the kit for newer versions and applies only what the owner approves. The rules are in `SCHEMA.md`
+§13.
+
+Never run git in this vault as part of an update. The kit gets cloned somewhere else.
+
 ## Skills — the vault is the source
 
-The `/capture`, `/process`, `/pull`, `/maintain`, and `/brain-skill` commands and their skills live in
-**`.claude/` in this vault**. Each machine installs them by copy into `~/.claude/`. **Never edit the
+The `/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`, `/digest`, and `/brain-update` commands
+and their skills live in **`.claude/` in this vault**. Each machine installs them by copy into `~/.claude/`. **Never edit the
 installed copy.** Edit the vault copy and reinstall.
 
 The skills are thin. They carry the job skeleton and the vault-resolution logic, and they point at

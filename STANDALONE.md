@@ -16,7 +16,12 @@
 >
 > The assistant explains the system and writes nothing.
 >
-> This is the self-contained edition of the **ai-brain-seed** kit. Same content, no download needed.
+> This is the self-contained edition of the **ai-brain-seed** kit, version 0.3.0. Same content, no
+> download needed.
+>
+> **It installs a new brain.** To update one that already exists, use `UPDATES.md` and `migrations/` from
+> the repository at <https://github.com/ajdayvie/ai-brain-seed> — those read the vault you already have and
+> patch it, which no single-paste file can do.
 >
 > The kit is extracted from a working brain in daily use since June 2026, so it is a snapshot of something
 > running rather than a proposal. It descends from Andrej Karpathy's LLM-wiki idea and agent-environment
@@ -214,6 +219,33 @@ pure-instruction skills belong there. Every other store needs an install on each
 skill store at all**, so a method reaches ChatGPT as a custom GPT or as instruction text that the owner
 refreshes by hand whenever the master changes. The full treatment is in Part VI (The skill library).
 
+### 9. The digest: an interface onto the knowledge, not a record of it
+
+The wiki is written to be **read**. Some knowledge is easier to take in while driving, walking, or away from
+a screen, and reading a wiki page aloud does not work — it is dense, full of links and paths, and written
+for eyes that can skim back.
+
+So `/digest` writes a different artifact from the same material: a **spoken-word script**, 600 to 900 words,
+plus a pre-rendered MP3. It sits in `digests/`, outside the golden flow.
+
+**The line that makes this safe is that a digest is an interface, never a record.** The wiki holds what is
+true. A digest holds one explanation of it, shaped for ears. Three rules follow, and each one exists because
+the alternative corrupts something:
+
+- **A digest is not a capture.** Durable knowledge still goes to `inbox/`. A spoken restatement is a
+  presentation of a source, not a source.
+- **Process never reads `digests/`.** Compiling lossy prose back into the wiki would put something that was
+  never the source into the source of truth. That is the failure this rule exists to prevent, and it is the
+  one that would be hardest to detect afterward.
+- **It is never offered proactively.** An offer that fires in normal use is noise, and noise trains the
+  owner to ignore the channel.
+
+Digests age out of the root at 60 days into `heard/`, and **nothing is deleted**. That is a deliberate
+choice with a real cost: `heard/` grows without bound at roughly two megabytes per digest. The alternative —
+deleting after a window — was rejected because a listened-to explanation is sometimes the only place an
+argument was ever phrased well, and the system should not throw that away on a timer. An owner who wants a
+delete step adds it knowingly.
+
 ## Key design decisions, consolidated
 
 | Decision | Why | Trade-off accepted |
@@ -227,6 +259,10 @@ refreshes by hand whenever the master changes. The full treatment is in Part VI 
 | LLM owns the wiki | The whole point — the agent curates, the human reviews | Requires trust + periodic maintenance passes |
 | Self-sufficient notes | The compile sees only the vault, so a note that points outward is unfileable | Capture takes a few more words than a bare link |
 | Library beside the vault, not inside it | A tool is not knowledge. Methods inside a knowledge base blur what the brain is | A second folder to sync and to install on each machine |
+| Digests outside the golden flow | A spoken restatement is an interface, not a source. Compiling one into the wiki would corrupt the source of truth | A second place to look, and one the compile deliberately ignores |
+| Digests are never deleted | A well-phrased explanation is sometimes the only good phrasing of an argument | `heard/` grows without bound, about two megabytes per digest |
+| A versioned kit with migrations | A vault built a year ago can gain new verbs without a reinstall or a rebuild | The kit must ship a tested migration per release, and it must never overwrite an edited file |
+
 ## The governance chain
 
 The documents form a deliberate chain from thin-and-always-loaded to deep-and-on-demand:
@@ -240,7 +276,9 @@ The documents form a deliberate chain from thin-and-always-loaded to deep-and-on
 | `wiki/_tags.md` | The controlled subject vocabulary |
 | `wiki/_index.md` | Catalog — *what exists* |
 | `wiki/_log.md` | Append-only journal — *what changed* |
+| `digests/_catalog.md` | What there is to listen to — an index onto the wiki, not part of it |
 | `.claude/INSTALL.md` | The per-machine runbook: how skills copy from the vault into `~/.claude/` |
+| `.claude/VERSION.md` | Which kit version built this vault, and every update applied since |
 | `<library>/CONVENTIONS.md` | The skill contract: where a master lives, how far it reaches, provenance, packaging traps, what is not a skill |
 
 Index vs log is an easy thing to confuse: `_index.md` answers "what's in here?", `_log.md` answers "what
@@ -265,6 +303,10 @@ step. A client that copies a rule inline goes stale the day the vault changes, a
   a missing-detail one, and it is flagged in `_log.md` for the human. A note carried more than twice is a
   filing bug, not a safe outcome.
 - The AI offers to capture at natural stopping points. It never captures silently and never nags.
+- Never compile a digest into the wiki, and never let a digest stand in for a capture. A digest is never
+  offered — the owner asks for it.
+- An update never costs the owner knowledge. It never overwrites a file they edited, and it never touches
+  `wiki/` page content, `inbox/`, `raw/`, `outputs/`, or `digests/`.
 
 ---
 
@@ -280,12 +322,17 @@ step. A client that copies a rule inline goes stale the day the vault changes, a
 >   inbox/.keep   raw/.keep   outputs/.keep
 >   wiki/_conventions.md  wiki/_tags.md  wiki/_index.md  wiki/_log.md
 >   wiki/topics/.keep  wiki/projects/.keep  wiki/archive/.keep
->   .claude/INSTALL.md
+>   digests/_catalog.md   digests/heard/.keep
+>   .claude/INSTALL.md   .claude/VERSION.md
+>   .claude/scripts/render-digest.py
 >   .claude/skills/capture-to-inbox/SKILL.md
 >   .claude/skills/process-inbox/SKILL.md
 >   .claude/skills/maintenance-pass/SKILL.md
 >   .claude/skills/skill-library/SKILL.md
+>   .claude/skills/audio-digest/SKILL.md
+>   .claude/skills/brain-update/SKILL.md
 >   .claude/commands/capture.md  process.md  pull.md  maintain.md  brain-skill.md
+>   .claude/commands/digest.md  brain-update.md
 >
 > <library>/
 >   README.md  CONVENTIONS.md  INSTALL.md  registry.md
@@ -316,6 +363,11 @@ This document holds everything you need.
 
 Read Part I (Background) before you teach or build. You cannot install what you do not understand.
 
+**This document is for a brain that does not exist yet.** If the owner already has one and wants the newer
+features, stop, and use `UPDATES.md` from the kit repository at <https://github.com/ajdayvie/ai-brain-seed> instead. It probes the existing vault, works out its version, and
+applies only the migrations the owner approves. Running this intake against a live vault would overwrite
+their protocol files.
+
 ---
 
 ## Mode: teach only
@@ -323,7 +375,7 @@ Read Part I (Background) before you teach or build. You cannot install what you 
 Trigger: the owner says `teach me how the brain works`, or asks to understand the system before any setup.
 
 Explain. Write nothing. Cover, in this order: the problem, the claim, the method behind the design, the
-golden flow, the four verbs, the three classification axes, what daily use feels like, and what an install
+golden flow, the five verbs, the three classification axes, what daily use feels like, and what an install
 would ask of them. Answer questions from Part I (Background) and the `SCHEMA.md` template in Part III.
 
 Offer to run the install when they are ready. Do not write a file until they say yes.
@@ -341,8 +393,10 @@ each. Keep the whole thing under about 400 words.
    plain markdown in the owner's own storage.
 3. **The golden flow.** `inbox/` to `raw/` to `wiki/` to `outputs/`. Capture is fast and makes no filing
    decision. Process compiles the inbox into pages and moves each source note to `raw/`, which is immutable.
-4. **The four verbs.** capture, process, pull, maintain. Four verbs move knowledge, and `/brain-skill` turns
-   a repeated method into a skill that installs to the surfaces the owner uses.
+4. **The five verbs.** capture, process, pull, maintain, digest. The first four move knowledge. **Digest**
+   turns a session into a spoken-word script and an MP3 to listen to later, which is an interface onto the
+   knowledge rather than a record of it. `/brain-skill` is separate again: it turns a repeated method into a
+   skill that installs to the surfaces the owner uses.
 5. **What daily use feels like.** Capture freely from any surface. The compile runs nightly, or on a cadence
    they choose. Pull answers with citations to pages.
 
@@ -431,8 +485,12 @@ You choose the two nightly values in step 8. Come back and fill them in if the o
 
 The vault's `.claude/` folder is the source of truth for the skills and the slash commands. Cloud sync
 carries it to every machine. Each machine gets an installed copy under `~/.claude/`. The install covers
-**4 skills** (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`) and **5 commands**
-(`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`).
+**6 skills** (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`, `audio-digest`,
+`brain-update`) and **7 commands** (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`,
+`/digest`, `/brain-update`).
+
+`.claude/scripts/` is not copied. The `audio-digest` skill calls `render-digest.py` at its vault path, so
+it lives in one place.
 
 Read `<vault>/.claude/INSTALL.md` and follow it on this machine. It covers the copy commands for Windows and
 for macOS and Linux, the optional drift check, and how to verify the install.
@@ -448,6 +506,16 @@ Two points from that runbook that you must get right.
 
 A protocol change needs no reinstall. Editing `SCHEMA.md` reaches every machine and every surface through
 cloud sync. Reinstall only when a skill file itself changes.
+
+**One optional dependency: `edge-tts`, for the `/digest` MP3.** Tell the owner the command
+(`pip install edge-tts`) and let them run it. **Do not install software on their machine.** It is free and
+needs no API key. Without it `/digest` still writes the script and sets `audio: none` — the markdown is the
+artifact, the MP3 is a convenience. FFmpeg is optional on top of that: `ffprobe` is what measures the real
+runtime, and without it the runtime is recorded as unknown rather than guessed.
+
+**Also fill in `<vault>/.claude/VERSION.md`.** It records the seed version this vault was built from, and
+`/brain-update` reads it later to work out what is missing. Set `seed-version:` from the kit's `VERSION`
+file, and `installed:` to today.
 
 **The library is a second, separate install.** Its runbook is `<library>/INSTALL.md`. Do not run it now. The
 library's `skills/` folder ships empty, so on day one there is nothing to install from it.
@@ -467,6 +535,9 @@ loop is the whole system.
 2. **Process.** Run `/process`. Confirm that a wiki page is built with valid frontmatter, that the note moved
    to `raw/`, and that `_index.md` and `_log.md` are updated.
 3. **Pull.** Ask: "when was this brain installed?" Confirm that the answer cites the new page.
+4. **Digest**, only if the owner installed `edge-tts`. Run `/digest`. Confirm that one script lands in
+   `digests/`, that an MP3 sits beside it, that `_catalog.md` gained a line, and that the reply was **one
+   line**. Delete the test digest afterward and say that you did.
 
 If a step fails, fix the cause before you go on.
 
@@ -597,7 +668,11 @@ Tell them the rule: a modest seed plus steady capture beats a large stale import
 Close by telling the owner, in plain language:
 
 - Where the vault is, and where the library is.
-- The four verbs, and how to invoke each one on each surface they set up.
+- The five verbs, and how to invoke each one on each surface they set up.
+- That `/digest` writes a spoken-word script and an MP3 to `digests/`, that it is **not** a capture, that
+  the compile never reads that folder, and that it is never offered — they ask for it.
+- That the kit keeps changing, and **`/brain-update`** checks for newer versions and applies only what they
+  approve. Nothing expires. Their version is recorded in `.claude/VERSION.md`.
 - That the AI offers to build a skill when a capture is a repeatable method, and during a maintenance pass,
   and that nothing is built without their yes. `/brain-skill` sweeps for one on demand.
 - When the compile runs, or when their reminder fires.
@@ -661,6 +736,9 @@ surfaces. Any sync product that does both would work.
 - `wiki/projects/<slug>/` — active work. It pulls from topics. Move the learning back to topics when the work ends.
 - `wiki/archive/` — finished or dormant projects.
 - `outputs/<project>/drafts/` then `outputs/<project>/` — deliverables. Code outputs go in their own repo, not here.
+- `digests/` — **volatile.** Spoken-word audio digests, a script plus a pre-rendered MP3, written for
+  listening on the go. Not knowledge, not a source, not a deliverable: an *interface*. See §6f. It sits
+  outside the golden flow on purpose. `/process` never reads it, and nothing in it is immutable.
 
 ## 4. Identity is metadata
 
@@ -729,6 +807,9 @@ native disk access to the vault. Step 3 deletes the note from `inbox/`, and that
    bad filing. Equally, never let an unreachable pointer strand a note that has real content. A note carried
    more than twice is a bug in the filing, not a safe outcome.
 7. Report what you filed and what you left.
+8. **Never read `digests/`.** A digest is a lossy spoken restatement written for ears. Compiling one into
+   the wiki would put prose that was never the source into the source of truth. If a digest holds something
+   durable that was never captured, the fix is a real capture note per §6a, not a filing of the digest.
 
 ### 6c. PULL (query the brain)  [command: /pull]
 
@@ -740,6 +821,10 @@ durable, offer to capture it.
 Triggered by `/maintain` or by "run a maintenance pass". Scan for broken wikilinks, orphan pages,
 contradictions, stale pages, off-vocabulary tags, and invalid frontmatter. Report the findings, apply safe
 fixes, list the contradictions for the owner to decide, and append a `maintenance` entry to `_log.md`.
+
+**Maintain also owns digest retention.** Move any file in the `digests/` root older than **60 days** into
+`digests/heard/`, markdown and MP3 together. **Nothing is deleted.** This is a file move by age, not a read:
+the lint checks in this section never open a digest and never judge its content.
 
 ### 6e. SKILL (a repeatable method -> a skill)  [skill: skill-library]
 
@@ -769,6 +854,38 @@ declined, and a declined row carries the reason.
 
 Read `<library>/CONVENTIONS.md` for where a master lives and how far a skill reaches. This file does not
 restate it.
+
+### 6f. DIGEST (a session -> a listenable script and an MP3)  [skill: audio-digest]
+
+Triggered by `/digest`, by "make an audio digest", or by "record that for the car". **Never offered
+proactively.** An offer that fires in normal operation is noise, and it trains the owner to ignore the
+channel.
+
+**A digest is an interface, never a record.** The wiki holds what is true. A digest holds one explanation of
+it, shaped for ears, that ages out. It is **not** a capture — durable knowledge still goes to `inbox/` via
+§6a, separately, and only if the owner asks.
+
+1. Take the substantive content of the session: the reasoning, the trade-offs, and the numbers. **Not a list
+   of what happened.** A summary says "we decided X". A digest explains what X is and why it beat Y, slowly
+   enough to follow with your eyes on the road. Pick 2 to 4 ideas and teach them properly.
+2. Write a **spoken-word script**, 600 to 900 words, to `digests/YYYY-MM-DD-HHMM-<slug>.md`. No bullets,
+   tables, headings, links, file paths, or code identifiers in the body. Numbers said in words. Internal
+   scaffolding — agent names, branches, tool names — stripped. The footing of every claim said out loud.
+   The full spec is in the skill.
+3. Render the MP3 beside it with `.claude/scripts/render-digest.py` (edge-tts: free, no API key, needs a
+   network connection). Record the **measured** runtime in frontmatter, never an estimate. If the render
+   fails, set `audio: none` and carry on. The markdown is the artifact.
+4. Append one line to `digests/_catalog.md`, written for how the owner would ask for it out loud.
+5. Reply with **one line** and stop. No preview, no summary, no follow-up. The whole point is not
+   interrupting the session.
+
+**Retention:** the `digests/` root moves to `heard/` at 60 days, and then it is kept. **Nothing is deleted.**
+`/maintain` does the move (§6d). The skill itself never moves and never deletes anything.
+
+**Playback:** open the file and read the body aloud **verbatim, from the marker comment** — never summarize
+it. That instruction lives inside the file because claude.ai and Claude desktop discard the MCP
+`instructions` field, and connector review forbids behavioral steering in a tool description. The file is the
+only channel that reliably reaches a phone. For hands-free, play the MP3 from the sync app.
 
 ## 7. Index and log
 
@@ -846,7 +963,7 @@ vault changes.
 
 | Surface | Mechanism | Verbs |
 |---|---|---|
-| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain |
+| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain, digest |
 | Cowork / Claude desktop | A Project pointed at the vault, carrying a short instruction block | capture, process, pull |
 | claude.ai chat, web and phone | Dropbox connector, plus the same instruction block in a Project | capture, pull |
 | ChatGPT | A private custom GPT named `Brain` with the Dropbox app enabled | capture, pull, and process only with an approved plan |
@@ -876,11 +993,12 @@ master, and the owner refreshes it by hand.
 - Never edit `raw/`. Never fabricate a fact or a source.
 - Never duplicate a cross-cutting fact across topics or projects. Link the canonical page.
 - Never invent a tag. Propose an addition to `wiki/_tags.md` instead.
+- Never compile a digest into the wiki, and never let a digest stand in for a capture (§6f).
 - Never run git in this vault.
 
 ## 12. Skills and install
 
-The five commands and the four skills live in `<vault>/.claude/`. **That copy is the source of truth.** Each
+The seven commands and the six skills live in `<vault>/.claude/`. **That copy is the source of truth.** Each
 machine installs them by copy into `~/.claude/`. Never edit the installed copy. An edit there is invisible to
 every other machine, and the next install destroys it.
 
@@ -905,14 +1023,36 @@ there. This file does not restate it.
 bug. When the same name exists in two stores, both load, and which one wins is ambiguous. Nothing reports
 this.
 
-The four brain skills — `capture-to-inbox`, `process-inbox`, `maintenance-pass`, and `skill-library` — stay
-in the vault. They require the brain to exist, and **the vault must stay self-installing**. Point a session
-at `<vault>/.claude/INSTALL.md` and the brain works.
+The six brain skills — `capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`,
+`audio-digest`, and `brain-update` — stay in the vault. They require the brain to exist, and **the vault
+must stay self-installing**. Point a session at `<vault>/.claude/INSTALL.md` and the brain works.
 
 `<library>/CONVENTIONS.md` is the binding contract for the library: where a master lives, how far a skill
 reaches, the four stores, provenance, packaging, and what is not a skill. `<library>/INSTALL.md` is the
 per-machine install runbook for the library, and it is a **second install, separate from this vault's
 `.claude/INSTALL.md`**.
+
+## 13. Updating this vault  [skill: brain-update]
+
+This vault was built from a version of the **ai-brain-seed** kit, and the kit keeps changing. The version is
+recorded in `.claude/VERSION.md`, together with every update applied since.
+
+Triggered by `/brain-update`, or by "check my brain for updates". **Never offered proactively**, and never
+run on a schedule. An update is the owner's choice.
+
+1. Fetch the kit into a scratch folder **outside this vault**, or use a clone the session already has.
+2. Read the kit's `UPDATES.md` and follow it. That runbook is authoritative for the whole job: it works out
+   this vault's version, picks the migrations, and holds the safety contract.
+3. Apply only the migrations the owner says yes to, in ascending order, one at a time.
+4. Reinstall the `~/.claude/` copies on this machine, and name the owner's other machines as a to-do.
+5. Record the result in `.claude/VERSION.md` and append a `maintenance` line to `wiki/_log.md`.
+
+**Three rules bind every update.** Never run git in this vault, and never leave a `.git` folder here — clone
+the kit somewhere else. Never overwrite a file the owner has edited: a migration edits by anchor, and a
+missing anchor stops the step rather than guessing a location. Never touch `wiki/` page content, `inbox/`,
+`raw/`, `outputs/`, `digests/`, or the library's `skills/`.
+
+**Nothing expires.** A vault that stays at its installed version keeps working.
 ````
 
 ## File: `CLAUDE.md`
@@ -939,6 +1079,9 @@ rules).** They are binding, they may have changed, and this file deliberately do
 - **Three axes, three mechanisms.** Lifecycle goes to folders. Identity goes to the `identity:` field.
   Subject goes to tags and links from the controlled vocabulary in `wiki/_tags.md`. Never make folders carry
   subject. Never make tags carry status, type, or identity. The canonical rule is in `wiki/_conventions.md`.
+- **Digests are an interface, not a record.** `/digest` writes a spoken-word script and an MP3 to
+  `digests/`. It is **not** a capture, `/process` never reads that folder, and it is never offered
+  proactively. See the Digests section below.
 - **No git.** Dropbox handles sync and version history. Never run git commands in this vault.
 
 ## Capture prompting
@@ -972,10 +1115,32 @@ Read them there.
 When the owner asks something the brain might know, answer from `wiki/` and cite the pages you used. If the
 wiki does not cover it, say so. If the answer is durable, offer to capture it.
 
+## Digests
+
+`/digest` turns the substantive content of a session into a **spoken-word script plus an MP3**, written to
+`digests/`, for listening to later. The rules are in `SCHEMA.md` §6f. Read them there.
+
+Four things that are easy to get wrong:
+
+- **It is not a session summary.** A summary says "we decided X". A digest explains what X is and why it
+  beat Y, slowly enough to follow while driving.
+- **It is not a capture.** Durable knowledge still goes to `inbox/`. Offer that separately, after, and only
+  at a stopping point.
+- **`/process` never reads `digests/`.** A lossy spoken restatement must never reach the source of truth.
+- **Never offer a digest proactively.** Wait to be asked. Reply with one line and stop.
+
+## Updating this vault
+
+This vault was built from the **ai-brain-seed** kit. Its version is in `.claude/VERSION.md`. `/brain-update`
+checks the kit for newer versions and applies only what the owner approves. The rules are in `SCHEMA.md`
+§13.
+
+Never run git in this vault as part of an update. The kit gets cloned somewhere else.
+
 ## Skills — the vault is the source
 
-The `/capture`, `/process`, `/pull`, `/maintain`, and `/brain-skill` commands and their skills live in
-**`.claude/` in this vault**. Each machine installs them by copy into `~/.claude/`. **Never edit the
+The `/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`, `/digest`, and `/brain-update` commands
+and their skills live in **`.claude/` in this vault**. Each machine installs them by copy into `~/.claude/`. **Never edit the
 installed copy.** Edit the vault copy and reinstall.
 
 The skills are thin. They carry the job skeleton and the vault-resolution logic, and they point at
@@ -1075,7 +1240,7 @@ command name avoids a collision with other skill-building commands you may alrea
 
 Built skills live in a **library**, a folder beside the vault in the same synced storage. It holds the one
 master copy of each skill and the instructions for installing it. It sits beside the vault, not inside it,
-because a tool is not knowledge. The one exception is the four brain skills, which stay in the vault so the
+because a tool is not knowledge. The one exception is the six brain skills, which stay in the vault so the
 vault keeps installing itself.
 
 ### When the AI will offer
@@ -1159,6 +1324,56 @@ Its instructions are a **copy** of the master, and that copy goes stale the day 
 on either side reports it. `<library>/registry.md` names every ChatGPT carrier and the date it was last
 refreshed, so it is your refresh list.
 
+## Digests — the brain, out loud
+
+Some things are worth understanding away from a screen. **`/digest`** turns the hard content of a session
+into a **spoken-word script plus an MP3**, written to `digests/`. Play it on a drive or a walk.
+
+It is not a session summary. A summary says "we decided X". A digest explains what X is and why it beat Y,
+slowly enough to follow with your eyes on the road. It runs 600 to 900 words, which lands near four to six
+minutes.
+
+**A digest is an interface, not a record.** The wiki holds what is true. A digest holds one explanation of
+it, shaped for ears. Three things follow, and all three matter:
+
+| Rule | Why |
+|---|---|
+| A digest is **not** a capture | If the content is durable, capture it separately. A spoken restatement is not a source. |
+| **Process never reads `digests/`** | Compiling lossy prose into the wiki would poison the source of truth. |
+| It is **never offered** to you | You ask for it. An offer that fires in normal use is noise. |
+
+It replies with **one line** and stops — no preview, no summary, no follow-up. That is the point. You called
+it so the session would not be interrupted.
+
+**Retention.** Digests older than 60 days move to `digests/heard/` on the next `/maintain`. **Nothing is
+deleted.** That folder grows without bound, and each MP3 is about two megabytes, so a hundred digests is
+roughly two hundred megabytes of synced storage. Know that cost and decide for yourself.
+
+**Setup.** The MP3 render needs `edge-tts` (`pip install edge-tts`) and a network connection. FFmpeg is
+optional — it is what measures the real runtime. Without either, `/digest` still writes the script and marks
+the audio as missing. The markdown is the artifact.
+
+**Playing one.** On the phone, open the file and ask your assistant to read it aloud from the marker
+comment. Or play the MP3 from the Dropbox app, hands-free.
+
+## Updating the brain
+
+This vault was built from the **ai-brain-seed** kit, and the kit keeps changing. The version you are on is
+in `.claude/VERSION.md`.
+
+Run **`/brain-update`** from any Claude Code session that can reach the vault. It reports the version you
+are on, what each newer version adds, and how long each would take. **Then it stops and asks.** Nothing is
+written until you say yes, and you see a diff before any file you already have is changed.
+
+**Nothing expires.** A vault that stays where it is keeps working. You can take one update and decline
+another.
+
+Two things it will never do: run git in this vault, or touch `wiki/`, `inbox/`, `raw/`, `outputs/`, or
+`digests/`. An update changes the rules and the tools. It never changes your knowledge.
+
+After an update, **each of your other machines still needs the copy-install re-run.** The vault files sync.
+The `~/.claude/` copies do not.
+
 ## Backfilling existing context
 
 Do not try to file everything at once. As topics come up in real work, capture what you know into the inbox
@@ -1203,12 +1418,21 @@ Capture anything worth keeping into `inbox/`, fast and with no filing. Process m
 where sources are immutable, and builds it into `wiki/` as concept-per-page, interlinked. Deliverables come
 out in `outputs/`.
 
-## Four verbs
+## Five verbs
 
 - **capture** — drop something into `inbox/` with no filing decisions.
 - **process** — compile the inbox into the wiki, on demand or nightly.
 - **pull** — ask the brain. Answers cite wiki pages.
 - **maintain** — lint the wiki for broken links, orphans, contradictions, and bad frontmatter.
+- **digest** — turn a session into a spoken-word script and an MP3 in `digests/`, to listen to later.
+
+## Digests are not knowledge
+
+`digests/` sits **outside** the golden flow. A digest is an *interface*: one explanation of something,
+shaped for ears, that ages out. The wiki holds what is true.
+
+So a digest is never a capture, `process` never reads that folder, and digests older than 60 days move to
+`digests/heard/`. Nothing is deleted.
 
 ## No git
 
@@ -1229,7 +1453,9 @@ online-only. The files must be real on local disk.
 | `PROCESS.md` | The human handbook. How to use the brain day to day. |
 | `wiki/_conventions.md` | The page contract: naming, folders, the three axes, frontmatter. |
 | `wiki/_tags.md` | The controlled subject vocabulary. |
+| `digests/_catalog.md` | What there is to listen to, newest first. |
 | `.claude/INSTALL.md` | How to install the skills on a machine. |
+| `.claude/VERSION.md` | Which version of the seed kit this vault came from. `/brain-update` checks for newer ones. |
 ````
 
 ## File: `wiki/_conventions.md`
@@ -1357,7 +1583,7 @@ has no home here. New tags are added at process time, by proposing them here fir
 
 - `brain` — this knowledge base itself, its architecture and its storage.
 - `knowledge-management` — methods and concepts for personal knowledge work.
-- `workflow` — capture, process, pull, maintain, and other methods.
+- `workflow` — capture, process, pull, maintain, digest, and other methods.
 
 ### Starter subjects
 
@@ -1419,6 +1645,23 @@ rewrite an entry.
 ## [{{TODAY}}] conventions | Brain initialized from ai-brain-seed. Conventions and tag vocabulary approved by {{OWNER_NAME}}.
 ````
 
+## File: `digests/_catalog.md`
+
+````markdown
+# Audio digests — what's here to listen to
+
+Spoken-word explanations of things that were hard to hold in your head. Newest first.
+
+Each one has a markdown script and a pre-rendered MP3 beside it.
+
+A digest is an **interface, not a record**. The wiki holds what is true. A digest holds one explanation of
+it, shaped for ears. Nothing here is a source, and `/process` never reads this folder.
+
+Digests older than 60 days move to `heard/`. Nothing is deleted.
+
+<!-- Newest entry goes directly below this line. One entry, one blank line between. -->
+````
+
 ## File: `.claude/INSTALL.md`
 
 ````markdown
@@ -1474,13 +1717,17 @@ cp -R "$b/.claude/commands/." "$HOME/.claude/commands/"
 cp -R "$b/.claude/skills/."   "$HOME/.claude/skills/"
 ```
 
-That installs 5 commands (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`) and 4 skills
-(`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`).
+That installs 7 commands (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`, `/digest`,
+`/brain-update`) and 6 skills (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`,
+`audio-digest`, `brain-update`).
 
 The copy overwrites files of the same name. It does not delete anything else in `~/.claude/`.
 
+**`.claude/scripts/` is deliberately not copied.** The `audio-digest` skill calls `render-digest.py` at its
+vault path, so the script stays in one place and a change to it needs no reinstall.
+
 **The skill library is a second, separate install.** Its runbook is `<library>/INSTALL.md`, in the library
-folder beside the vault. **This runbook does not cover it.** These 4 skills are the brain skills, and they
+folder beside the vault. **This runbook does not cover it.** These 6 skills are the brain skills, and they
 stay in the vault so the vault keeps installing itself.
 
 ---
@@ -1505,6 +1752,24 @@ back to searching the session's directories for one holding both `SCHEMA.md` and
 fallback works inside the vault and fails outside it. Set it.
 
 If `~/.claude/settings.json` already exists, merge the `env` block into it. Do not replace the file.
+
+---
+
+## Optional: the digest renderer
+
+`/digest` always writes its script. The **MP3** needs one Python package, installed once per machine:
+
+```bash
+pip install edge-tts
+```
+
+It is free, needs no API key, and needs a network connection when a digest is rendered.
+
+**FFmpeg is optional.** `render-digest.py` calls `ffprobe` to measure the real length of the MP3. Without
+it the render still works, and the runtime is recorded as unknown rather than guessed.
+
+Skip both and `/digest` still works. It sets `audio: none` and says so. **The markdown is the artifact. The
+MP3 is a convenience.**
 
 ---
 
@@ -1548,8 +1813,8 @@ To fix any drift, re-run the install commands above. The vault always wins.
 
 ## Verify
 
-Open a new Claude Code session and confirm all five commands are offered: `/capture`, `/process`, `/pull`,
-`/maintain`, and `/brain-skill`.
+Open a new Claude Code session and confirm all seven commands are offered: `/capture`, `/process`, `/pull`,
+`/maintain`, `/brain-skill`, `/digest`, and `/brain-update`.
 
 Then run a real capture. `/capture test note` must write a file into `<vault>/inbox/` and report the full
 path. If it writes into the current project instead, `BRAIN_DIR` is not set or not readable.
@@ -1560,13 +1825,65 @@ path. If it writes into the current project instead, `BRAIN_DIR` is not set or n
 
 | Covered | Not covered |
 |---|---|
-| The 5 command files in `.claude/commands/` | `SCHEMA.md`, `wiki/_conventions.md`, `wiki/_tags.md`. Sync carries those, and no install is involved. |
-| The 4 skill folders in `.claude/skills/` | `BRAIN_DIR` in `~/.claude/settings.json`. Set once per machine, by hand. |
+| The 7 command files in `.claude/commands/` | `SCHEMA.md`, `wiki/_conventions.md`, `wiki/_tags.md`. Sync carries those, and no install is involved. |
+| The 6 skill folders in `.claude/skills/` | `BRAIN_DIR` in `~/.claude/settings.json`. Set once per machine, by hand. |
+| | `.claude/scripts/`. The skills call it at its vault path, so it is never copied. |
+| | `edge-tts`, for the `/digest` MP3. One `pip install` per machine. |
 | | The skill library. It installs separately, per `<library>/INSTALL.md`. |
 | | The instruction block on the Cowork, chat, and ChatGPT surfaces. Each is configured in its own app. |
 
 **WARNING:** reinstalling does not fix a wrong `BRAIN_DIR`. A skill that resolves the wrong vault writes
 notes into the wrong folder and reports success. Check the path in the verify step above.
+
+---
+
+## Updating the vault itself
+
+A reinstall copies the vault's **current** files to this machine. It does not bring in anything new from the
+kit the vault was built from.
+
+That is a separate job. `VERSION.md` beside this file records the version. Run **`/brain-update`** to check
+the kit for newer ones and apply only what the owner approves. The rules are in `SCHEMA.md` §13.
+
+**An update adds files under `.claude/`, so every machine needs this runbook re-run afterward.**
+````
+
+## File: `.claude/VERSION.md`
+
+````markdown
+# Vault version
+
+This file records which version of the **ai-brain-seed** kit this vault was built from, and every update
+applied to it since. It is machine-facing bookkeeping. It is not a wiki page, and `/process`, `/pull`, and
+`/maintain` ignore it.
+
+**Do not edit the history table by hand.** The update runbook appends to it. A row you write yourself makes
+the next update skip a migration it should have applied.
+
+```
+seed-version: 0.3.0
+installed:    {{TODAY}}
+vault-path:   {{VAULT_PATH}}
+library-path: {{SKILLS_PATH}}
+```
+
+## Applied
+
+| Version | Applied on | How | Notes |
+|---|---|---|---|
+| 0.3.0 | {{TODAY}} | fresh install | Built new from the 0.3.0 seed. No migration needed. |
+
+## Checking for updates
+
+Run **`/brain-update`** from any Claude Code session on a machine that can reach this vault. It reads the
+kit's current version, compares it against `seed-version:` above, and walks you through anything missing.
+
+Nothing expires. A vault that stays at its installed version keeps working. An update is a choice.
+
+The kit lives at <https://github.com/ajdayvie/ai-brain-seed>. Its `UPDATES.md` is the runbook, and
+`CHANGELOG.md` says what each version changed.
+
+**Never run git in this vault.** An update clones or fetches the kit somewhere else and copies from there.
 ````
 
 ## File: `.claude/skills/capture-to-inbox/SKILL.md`
@@ -1674,6 +1991,10 @@ For each note in `<brain>/inbox/`:
 - Never edit `raw/`. Never fabricate a fact or a source.
 - Never invent a tag. Propose an addition to `wiki/_tags.md` instead.
 - Never duplicate a cross-cutting fact across pages. Link the canonical page.
+- **Never read `digests/`.** It is not part of the inbox and it is not a source. A digest is a lossy spoken
+  restatement written for ears, and compiling one into the wiki puts prose that was never the source into
+  the source of truth. If a digest holds something durable that was never captured, the fix is a real
+  capture note, not a filing of the digest. See `SCHEMA.md` §6b step 8.
 - Never run git in this vault.
 ````
 
@@ -1735,16 +2056,23 @@ and they may have changed since the last pass.
      proposals in the findings, per `SCHEMA.md` §6e and §9. **Never act on one without the owner's yes.** On
      a yes, hand off to the **skill-library** skill in build mode.
 
-2. Report the findings grouped by category, with page paths.
-3. Apply the safe fixes: broken links, missing frontmatter fields, orphans relinked into `_index.md`, and
+2. **Move aged digests.** Any file in the `digests/` root older than **60 days** moves into
+   `digests/heard/`, the markdown and its MP3 together. **Nothing is deleted, ever.** This is a file move by
+   age: do not open a digest, do not judge its content, and do not lint it. `digests/` is not part of the
+   wiki, and nothing in it is a source. Report how many moved. See `SCHEMA.md` §6d and §6f.
+
+3. Report the findings grouped by category, with page paths.
+4. Apply the safe fixes: broken links, missing frontmatter fields, orphans relinked into `_index.md`, and
    retired tags remapped to their canonical form. Do NOT silently resolve a contradiction. Do NOT invent a
    new canonical tag. Propose vocabulary additions to `wiki/_tags.md` and list both for the owner.
-4. Update `wiki/_index.md` if needed. Append a `maintenance` entry to `wiki/_log.md`.
+5. Update `wiki/_index.md` if needed. Append a `maintenance` entry to `wiki/_log.md`.
 
 ## Hard rules
 
 - Never edit `raw/`. It is immutable, and a stale source is not a defect to fix.
 - Never delete a page to resolve a finding. Propose it and let the owner decide.
+- Never delete a digest or its MP3. `heard/` is an archive, not a staging area for deletion.
+- Never lint, edit, or compile anything in `digests/`. The retention move is the only thing you do there.
 - Never run git in this vault.
 ````
 
@@ -1860,6 +2188,277 @@ method reach other surfaces later.
 - Never run git in the vault or in the library.
 ````
 
+## File: `.claude/skills/audio-digest/SKILL.md`
+
+````markdown
+---
+name: audio-digest
+description: >
+  This skill should be used when the user wants the hard content of the current session turned into
+  something they can LISTEN to later — a spoken-word script, plus a pre-rendered MP3, written to the
+  brain's digests/ section. Triggers include "/digest", "make an audio digest", "digest that for the
+  drive", "explain that to me for later", "record that for the car", or "I want to listen to this
+  on the go". It writes the digest and replies with ONE line — it must not clutter the session it
+  was called from. It is NOT a capture: durable knowledge still goes to inbox/ via capture-to-inbox.
+---
+
+# Audio digest -> `digests/`
+
+**Vault root — resolve this before you touch any path.** `<brain>` is the value of the `BRAIN_DIR`
+environment variable, set per machine in `~/.claude/settings.json` under `env`. Read it with
+`echo "$BRAIN_DIR"`. If it is unset, use whichever directory available to this session holds both `SCHEMA.md`
+and a `wiki/` folder. **Never write a bare relative path like `digests/`.** This skill runs from any project
+directory, and a relative path resolves against that project instead of the brain.
+
+## Step 0 — load the binding protocol
+
+Read **`<brain>/SCHEMA.md` §6f** and follow it. It is authoritative, it may have changed, and this skill does
+not copy its rules. **SCHEMA wins over this file** on any rule. This file carries the job shape and the
+script spec, which are structure, not protocol.
+
+A digest touches no wiki page, so `wiki/_conventions.md` and `wiki/_tags.md` are not needed here.
+
+---
+
+## What this is, in one line
+
+**A digest is an interface, never a record.** The wiki holds what is true. A digest holds one explanation
+of it, shaped for ears, that ages out.
+
+Three consequences, all binding:
+
+- A digest is **not** a capture. If the content is durable, offer `/capture` separately — after, and only
+  if the owner is at a stopping point.
+- **`/process` must never read `digests/`.** A spoken restatement compiled into the wiki would pollute
+  the source of truth with lossy prose.
+- Digests **age out of the root**, but they are not deleted. At 60 days they move to `heard/` and stay
+  there. `/maintain` owns that move. See Retention.
+
+---
+
+## The job
+
+### 1. Choose the material
+
+Default scope is the substantive content of the current session — the reasoning, the trade-offs, the
+numbers, the thing that was hard to hold in your head. An argument narrows it (`/digest the pricing math`).
+
+**The anti-goal: this is not a session summary.** A summary says *"we decided X."* A digest explains
+*what X is and why it beat Y*, slowly enough to follow with your eyes on the road. If you find yourself
+listing what happened, you are writing the wrong artifact.
+
+Pick 2–4 ideas and teach them properly. Do not survey everything that was said.
+
+### 2. Write the script
+
+Target **600–900 words**, which lands near four to six minutes. Follow the spec below — it is the whole
+value of this skill.
+
+### 3. Write the file
+
+`<brain>/digests/YYYY-MM-DD-HHMM-<short-slug>.md`, in the shape given below.
+
+### 4. Render the audio
+
+```bash
+python "<brain>/.claude/scripts/render-digest.py" "<path-to-the-digest.md>"
+```
+
+It prints one line of JSON with the real duration. **Put that measured runtime in the frontmatter** —
+do not estimate it.
+
+The renderer needs `edge-tts` installed (`pip install edge-tts`) and a network connection. `ffprobe`, from
+FFmpeg, is optional: without it the JSON reports `"seconds": null`, and you then say the runtime is unknown
+rather than guessing one.
+
+If the render fails, leave `audio: none`, say so in your one line, and carry on. **The markdown is the
+artifact. The MP3 is a convenience.** A failed render never stops the digest from being written.
+
+### 5. Catalog it
+
+Append one line to `<brain>/digests/_catalog.md`, newest at the top, in the format given below.
+
+### 6. Report — one line, then stop
+
+> Digest recorded: **&lt;title&gt;** — 4 min — `digests/2026-09-13-1420-<slug>.md` + MP3
+
+**No preview of the script. No summary of the summary. No offer to continue. No follow-up question.**
+The owner called this so the session would *not* be interrupted. Honor that.
+
+---
+
+## The script spec
+
+### Shape
+
+1. **Cold open, two sentences.** The listener has no context, is hours away, and may be driving. Say
+   what this is about and why they would care.
+2. **The answer, then the reasoning.** Inverted from normal written order on purpose — a listener cannot
+   skim back.
+3. **One sentence of footing, early.** *"We measured the first part. The cost numbers are guesses."*
+4. **The explanation.** The bulk, and the point.
+5. **End on the open question, or the call the listener still owns.**
+
+### Rules
+
+- **No markdown that reads badly aloud.** No bullets, tables, headings, links, file paths, code
+  identifiers, or citation markers anywhere in the body.
+- **A table becomes a spoken comparison, with every number kept.** *"Three options were on the table.
+  The cheapest ran about four dollars a month, but it couldn't hold a filesystem."* Never drop a figure
+  to make a sentence speakable — say the figure in words.
+- **Numbers as speech.** "About fifteen dollars a month." "Roughly three to five times faster." "One
+  and a half megabytes." "Between thirty and forty percent."
+- **Use the real term, define it in one clause, then keep using it.** The listener wants to *learn* the
+  vocabulary, not have it removed. "An MCP server — that's just a small program that hands an AI a menu
+  of things it's allowed to do — sits between…"
+- **Signposts instead of headings.** *"First…"* · *"Here's where it got interesting."* · *"The part I'd
+  push back on is…"*
+- **Strip internal scaffolding.** No agent names, lane numbers, branch names, commit hashes, tool names,
+  or file paths. If the listener would have to have been in the session to parse it, rewrite it.
+- **Second person, contractions, conversational.** A colleague explaining on a walk — not a narrator.
+- **Say the footing out loud.** "We measured this." / "That's an estimate." / "Nobody's checked that."
+  Never launder a guess into a fact to make the sentence flow.
+
+---
+
+## File shape
+
+```markdown
+---
+title: Why we're putting a server between the agent and the files
+recorded: 2026-09-13 14:20
+runtime: 4 min 31 s
+source: <the project or session this came from>
+about: MCP servers, why the brain needs one, what it costs
+audio: 2026-09-13-1420-mcp-gateway.mp3
+state: new
+captured: no
+---
+
+# Why we're putting a server between the agent and the files
+
+<!-- Read aloud from the next line, verbatim. Do not summarize.
+     Everything above this line is filing metadata. -->
+
+So — the thing we worked out today was...
+```
+
+**That HTML comment is load-bearing, not decoration.** Connector review forbids putting "read this
+verbatim" in an MCP tool description, and claude.ai and Claude desktop silently discard the MCP
+`instructions` field. The inside of the file is the only channel that reaches the phone. Always include it.
+
+`about:` is written for how the owner will ask for it out loud — *"the one about the server thing"* — never
+for how a filename reads.
+
+---
+
+## Catalog line
+
+Newest at the top of `<brain>/digests/_catalog.md`:
+
+```
+- **Why we're putting a server between the agent and the files** — 4 min — 2026-09-13 — new —
+  MCP servers, why the brain needs one, what it costs. `2026-09-13-1420-mcp-gateway.md`
+```
+
+---
+
+## Retention
+
+**Nothing is deleted. `heard/` is an archive.**
+
+| Where | Rule |
+|---|---|
+| `digests/` root | Older than 60 days -> move to `heard/`, markdown and MP3 together |
+| `digests/heard/` | Kept. Nothing is deleted. |
+
+**`/maintain` does the move**, per `SCHEMA.md` §6d. This skill never moves and never deletes anything.
+Neither verb deletes a digest or its MP3.
+
+`heard/` grows without bound, and each MP3 runs about two megabytes, so a hundred digests is roughly two
+hundred megabytes of synced storage. That is the known cost of the "nothing is deleted" rule. An owner who
+wants a delete step adds it to `SCHEMA.md` §6f and to `/maintain` deliberately. It is not a default.
+
+---
+
+## Do not
+
+- Do not offer a digest proactively. Wait to be asked. An offer that fires in normal operation is noise,
+  and it trains the owner to ignore the channel.
+- Do not write to `wiki/`, `inbox/`, `raw/`, or `outputs/`. This skill owns `digests/` and nothing else.
+- Do not run git in the vault. Ever.
+````
+
+## File: `.claude/skills/brain-update/SKILL.md`
+
+````markdown
+---
+name: brain-update
+description: >
+  This skill should be used when the user wants to check their knowledge brain for updates from the
+  ai-brain-seed kit and install them. Triggers include "/brain-update", "check my brain for updates",
+  "update the brain", "is my brain out of date", "what's new in the brain kit", and "install the new
+  brain features". It finds the kit, compares versions, shows what changed, and applies only the
+  migrations the owner says yes to. It never updates without a yes, and it never runs git in the vault.
+---
+
+# Update the brain from the kit
+
+**Vault root — resolve this before you touch any path.** `<brain>` is the value of the `BRAIN_DIR`
+environment variable, set per machine in `~/.claude/settings.json` under `env`. Read it with
+`echo "$BRAIN_DIR"`. If it is unset, use whichever directory available to this session holds both `SCHEMA.md`
+and a `wiki/` folder. If that is ambiguous, **ask the owner for the absolute path and wait.** Never guess a
+default like `~/Dropbox/AI-Brain`. This skill runs from any project directory.
+
+## Step 0 — load the binding protocol
+
+Read **`<brain>/SCHEMA.md` §13** and **`<brain>/.claude/VERSION.md`**. §13 is authoritative for what an
+update may and may not do in this vault. If `VERSION.md` is missing, this vault predates version tracking —
+that is expected, and the kit's runbook knows how to handle it.
+
+## Step 1 — get the kit
+
+The kit is <https://github.com/ajdayvie/ai-brain-seed>.
+
+If this session already has a clone of it, use that and `git pull` first. Otherwise clone it shallow into a
+scratch folder, or fetch the raw files over HTTPS if git is unavailable.
+
+**The clone must never land inside `<brain>`, and you must never run git inside `<brain>`.** The vault is
+git-free forever. Cloud sync is its versioning layer.
+
+## Step 2 — hand off to the kit's runbook
+
+Read **`<kit>/UPDATES.md`** and follow it, start to finish. **That document is authoritative for the whole
+job.** It holds the version probe, the placeholder recovery, the migration order, the safety contract, the
+verification, and the bookkeeping. This skill deliberately does not copy any of it, so a kit released after
+this file was written still updates correctly.
+
+Read `<kit>/CHANGELOG.md` so you can say what each version actually changed, rather than paraphrasing from
+memory.
+
+## The rules this skill will not let a runbook relax
+
+- **Never run git in the vault.** Never leave a `.git` folder there.
+- **Ask before each migration**, and show a diff before every edit to an existing file. Declining one is a
+  valid answer, and a partial update is a valid end state.
+- **Never touch** `wiki/` page content, `inbox/`, `raw/`, `outputs/`, `digests/`, or the library's
+  `skills/`. Those are the owner's. The exceptions are the anchored `_log.md` entry and any `_index.md`
+  change a migration names explicitly.
+- **Back up every existing file you edit** beside itself as `<file>.pre-<version>` before the edit.
+- **A missing anchor stops the step.** Show the owner the surrounding lines and let them decide. Never
+  improvise a location, and never overwrite their file with the seed template.
+- **Never install software on the owner's machine.** State the command and let them run it.
+- **Report what you skipped**, in `.claude/VERSION.md` and in `wiki/_log.md`, with the reason. A skipped
+  step that is not written down is one the next update assumes ran.
+
+## Do not
+
+- Do not offer an update proactively, and do not put one on a schedule. Nothing expires. A vault that stays
+  at its installed version keeps working.
+- Do not update a vault you have not confirmed with the owner by absolute path.
+- Do not report an update as finished when a step errored or was skipped.
+````
+
 ## File: `.claude/commands/capture.md`
 
 ````markdown
@@ -1948,6 +2547,207 @@ not from memory.
 Never write a master without my explicit yes.
 ````
 
+## File: `.claude/commands/digest.md`
+
+````markdown
+---
+description: Record an audio digest of this session to the brain (no session clutter)
+---
+Apply the **audio-digest** skill for: $ARGUMENTS
+
+Resolve the vault as `$BRAIN_DIR`, never as a bare relative `digests/`. If no argument is given, digest the
+substantive content of our current session — the reasoning and the numbers, not a list of what happened.
+
+Follow the skill's Step 0 first: read `SCHEMA.md` §6f and work from it, not from memory.
+
+Write the script to `$BRAIN_DIR/digests/`, render the MP3, add one catalog line — then reply with **exactly
+one line** and stop. Do not preview the script, do not summarize what you wrote, and do not ask a follow-up.
+
+This is not a capture. If the content is durable, offer `/capture` separately, and only at a stopping point.
+````
+
+## File: `.claude/commands/brain-update.md`
+
+````markdown
+---
+description: Check the ai-brain-seed kit for updates and install the ones I approve
+---
+Apply the **brain-update** skill. Any argument narrows it: $ARGUMENTS
+
+Resolve the vault as `$BRAIN_DIR`. If that is unset or ambiguous, ask me for the absolute path and wait.
+Never guess a default.
+
+Follow the skill's Step 0 first: read `SCHEMA.md` §13 and `.claude/VERSION.md`, and work from those, not from
+memory. Then fetch the kit into a scratch folder **outside the vault** and follow its `UPDATES.md`.
+
+With no argument, check and report only:
+
+- the version my vault is on, and the version the kit is on;
+- one line per missing version, saying what it adds, from the kit's `CHANGELOG.md`;
+- how long each would take.
+
+**Then stop and ask which ones to apply.** Do not write anything into the vault before I say yes. Show me a
+diff before every edit to a file I already have. Never run git in the vault.
+````
+
+## File: `.claude/scripts/render-digest.py`
+
+````python
+#!/usr/bin/env python3
+"""
+render-digest.py — turn an audio-digest markdown file into a pre-rendered MP3.
+
+Used by the `audio-digest` skill. Reads a digest file from `<vault>/digests/`,
+strips everything that is filing metadata rather than script, and renders the
+spoken body with edge-tts (Microsoft neural voices; free, no API key, needs a
+network connection).
+
+Usage:
+    python render-digest.py <path-to-digest.md> [--voice NAME] [--rate PCT] [--dry-run]
+
+Prints one line of JSON to stdout:
+    {"ok": true, "audio": "...mp3", "seconds": 271.4, "words": 780, "wpm": 172}
+
+Exit codes: 0 ok, 1 bad input, 2 render failed (network/edge-tts).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+# Warm, conversational, closest of the free voices to an explaining colleague.
+DEFAULT_VOICE = "en-US-AndrewMultilingualNeural"
+
+# Negative rate slows delivery. Digests are explanatory, not news reads:
+# -8% lands near 170 wpm, which is a pace you can follow while driving.
+DEFAULT_RATE = "-8%"
+
+FRONTMATTER = re.compile(r"\A---\r?\n.*?\r?\n---\r?\n", re.DOTALL)
+HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
+
+
+def strip_to_script(raw: str) -> tuple[str, str]:
+    """Return (title, spoken_body). Everything not meant for the ear is removed."""
+    body = FRONTMATTER.sub("", raw, count=1)
+    body = HTML_COMMENT.sub("", body)
+
+    title = ""
+    lines = body.splitlines()
+    out: list[str] = []
+    for line in lines:
+        if not title and line.startswith("# "):
+            title = line[2:].strip()
+            continue
+        # A digest body should carry no headings at all. If one slipped in,
+        # speak its text rather than dropping the content on the floor.
+        if line.startswith("#"):
+            out.append(line.lstrip("#").strip())
+            continue
+        out.append(line)
+
+    text = "\n".join(out)
+
+    # Defensive cleanup. By spec the body is plain spoken prose, but a stray
+    # link or emphasis marker must never be read aloud as punctuation noise.
+    text = re.sub(r"\[\[([^\]|]+)\|([^\]]+)\]\]", r"\2", text)   # [[page|label]]
+    text = re.sub(r"\[\[([^\]]+)\]\]", r"\1", text)              # [[page]]
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)         # [text](url)
+    text = re.sub(r"`{1,3}([^`]*)`{1,3}", r"\1", text)           # code spans
+    text = re.sub(r"(\*\*|__|\*|_)", "", text)                   # emphasis
+    text = re.sub(r"^\s*[-*+]\s+", "", text, flags=re.M)         # bullets
+    text = re.sub(r"^\s*>\s?", "", text, flags=re.M)             # quotes
+    text = re.sub(r"[‘’]", "'", text)
+    text = re.sub(r"[“”]", '"', text)
+    text = re.sub(r"[—–]", ", ", text)                 # dashes -> a beat
+    text = re.sub(r"[^\x00-\x7F]+", " ", text)                   # emoji, symbols
+    text = re.sub(r"\n{3,}", "\n\n", text)
+
+    return title, text.strip()
+
+
+def duration_seconds(path: Path) -> float | None:
+    try:
+        r = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=nw=1:nk=1", str(path)],
+            capture_output=True, text=True, timeout=60,
+        )
+        return round(float(r.stdout.strip()), 1)
+    except Exception:
+        return None
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("digest", type=Path)
+    ap.add_argument("--voice", default=DEFAULT_VOICE)
+    ap.add_argument("--rate", default=DEFAULT_RATE)
+    ap.add_argument("--dry-run", action="store_true",
+                    help="print the spoken text and exit; render nothing")
+    args = ap.parse_args()
+
+    if not args.digest.is_file():
+        print(json.dumps({"ok": False, "error": f"no such file: {args.digest}"}))
+        return 1
+
+    title, script = strip_to_script(args.digest.read_text(encoding="utf-8"))
+    if not script:
+        print(json.dumps({"ok": False, "error": "no spoken body found"}))
+        return 1
+
+    # The title is spoken first so the file identifies itself when scrubbed to
+    # from a car stereo, where no filename is visible.
+    spoken = f"{title}.\n\n{script}" if title else script
+    words = len(spoken.split())
+
+    if args.dry_run:
+        print(spoken)
+        return 0
+
+    audio = args.digest.with_suffix(".mp3")
+
+    # edge-tts 7.x wants a file, not stdin. A sidecar next to the digest also
+    # keeps the exact spoken text auditable when a render sounds wrong.
+    txt = args.digest.with_suffix(".speech.txt")
+    txt.write_text(spoken, encoding="utf-8")
+
+    cmd = [sys.executable, "-m", "edge_tts",
+           "--voice", args.voice, f"--rate={args.rate}",
+           "-f", str(txt), "--write-media", str(audio)]
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=900)
+    except Exception as e:  # noqa: BLE001
+        print(json.dumps({"ok": False, "error": f"edge-tts failed to start: {e}"}))
+        return 2
+    finally:
+        txt.unlink(missing_ok=True)
+
+    if proc.returncode != 0 or not audio.is_file():
+        print(json.dumps({"ok": False, "error": (proc.stderr or "render failed")[-400:]}))
+        return 2
+
+    secs = duration_seconds(audio)
+    print(json.dumps({
+        "ok": True,
+        "audio": str(audio),
+        "seconds": secs,
+        "words": words,
+        "wpm": round(words / (secs / 60)) if secs else None,
+        "voice": args.voice,
+    }))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+````
+
 ---
 
 # Part IV — Library file templates
@@ -1987,8 +2787,8 @@ Nothing reports this. `registry.md` is what makes it visible.
 
 ## The command is `/brain-skill`
 
-Four verbs move knowledge: capture, process, pull, maintain. **`/brain-skill` turns a repeated method into a
-skill.** It is backed by a vault skill named `skill-library`.
+Five verbs move knowledge: capture, process, pull, maintain, digest. **`/brain-skill` turns a repeated
+method into a skill.** It is backed by a vault skill named `skill-library`.
 
 The command is named `brain-skill` and not `skill` so it does not collide with other skill-building commands
 you may already have installed.
@@ -2790,7 +3590,7 @@ files, and an instruction to read `SCHEMA.md` and `wiki/_conventions.md` and fol
 
 | Surface | Mechanism | Verbs | Notes |
 |---|---|---|---|
-| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain | The primary surface. Owns process and maintain. |
+| Claude Code (local) | Skills and slash commands in `<vault>/.claude/`, installed by copy into `~/.claude/` | capture, process, pull, maintain, digest | The primary surface. Owns process, maintain, and digest. |
 | Cowork / Claude desktop | A Project pointed at the vault, carrying a short instruction block | capture, process, pull | Can run the Option A scheduled task. |
 | claude.ai chat, web and phone | Dropbox connector, plus the same instruction block in a Project | capture, pull | No process. |
 | ChatGPT | A private custom GPT named `Brain` with the Dropbox app enabled | capture, pull, and process only with an approved plan | Never upload vault files as GPT Knowledge. |
@@ -2808,9 +3608,13 @@ The vault holds the source of truth for the skills and commands:
 ~/.claude/           INSTALLED COPY. Never edit. Overwritten on every install.
 ```
 
-The vault ships four skills (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`) and
-five slash commands (`/capture`, `/process`, `/pull`, `/maintain`, `/brain-skill`). They install into
-`~/.claude/` by copy, so they work from **any** project directory, not only from inside the vault.
+The vault ships six skills (`capture-to-inbox`, `process-inbox`, `maintenance-pass`, `skill-library`,
+`audio-digest`, `brain-update`) and seven slash commands (`/capture`, `/process`, `/pull`, `/maintain`,
+`/brain-skill`, `/digest`, `/brain-update`). They install into `~/.claude/` by copy, so they work from
+**any** project directory, not only from inside the vault.
+
+`.claude/scripts/` is not copied. The `audio-digest` skill calls `render-digest.py` at its vault path, so
+a change to that script needs no reinstall.
 
 **Never edit the installed copy.** An edit in `~/.claude/` is invisible to every other machine, and the next
 install destroys it. Change the vault copy and reinstall.
@@ -2957,6 +3761,35 @@ Four limits are worth stating plainly, because they are easy to overclaim.
 For the rest — where a master lives, how far it reaches, the one-store rule, junction versus copy,
 provenance, and the packaging traps — read Part VI (The skill library) and `<library>/CONVENTIONS.md`. Do not restate
 those rules in a client's instructions. Point at them.
+
+## Digest reach — writing one, and listening to one
+
+Writing a digest and playing one are different jobs, and they land on different surfaces.
+
+| Surface | Write a digest | Play one |
+|---|---|---|
+| Claude Code (local) | Yes, script and MP3. It owns this verb. | Not the point. |
+| Cowork / Claude desktop | Yes, if it can run the script. Otherwise the markdown only, with `audio: none`. | Yes, either way. |
+| claude.ai chat, web and phone | Markdown only, through the connector. No MP3 — there is no shell. | **Yes. This is the listening surface.** |
+| ChatGPT | Markdown only, same reason. | Yes, read aloud from the file. |
+
+**The chat and ChatGPT clients ship wired for capture and pull only.** Writing a digest from those surfaces
+is possible, not configured: the owner asks for it in so many words, and gets the markdown without an MP3.
+Claude Code owns this verb, and that is where it belongs.
+
+**Reading one aloud on the phone.** Open the file and read the body **verbatim from the marker comment**.
+Never summarize it — the script is already the summary, and summarizing it again strips the reasoning that
+is the whole point.
+
+That instruction lives **inside the file**, as an HTML comment above the body. It is there because claude.ai
+and Claude desktop silently discard the MCP `instructions` field, and connector review forbids behavioral
+steering in a tool description. The inside of the file is the only channel that reliably reaches a phone.
+
+**Hands-free, play the MP3 from the Dropbox app instead.** It needs no assistant and no network beyond the
+sync.
+
+`digests/_catalog.md` is the index, newest first, and each entry's `about:` line is written for how the
+owner would ask for it out loud — *"the one about the server thing"*.
 
 ## The rules that span all surfaces
 
@@ -3118,8 +3951,8 @@ method only in a surface's memory and call it saved.**
 
 ## 6. `/brain-skill` and its three modes
 
-Four verbs move knowledge: capture, process, pull, maintain. **`/brain-skill` turns a repeated method into a
-skill.** It is backed by a vault skill named `skill-library`.
+Five verbs move knowledge: capture, process, pull, maintain, digest. **`/brain-skill` turns a repeated
+method into a skill.** It is backed by a vault skill named `skill-library`.
 
 The command is named `brain-skill` and not `skill` so it does not collide with other skill-building commands
 you may already have installed.
@@ -3370,6 +4203,22 @@ the system is **never** processing. The wiki stops growing, and pulls go stale b
 is still sitting unfiled.
 
 Pick the cadence you will actually keep.
+
+## Maintain has a cadence too, and it is slower
+
+The compile is the job that must be regular. **`/maintain` is the one that must merely happen** — monthly is
+plenty for most vaults.
+
+It does two things on a clock. It lints the wiki, which matters more the more pages there are. And it moves
+digests older than 60 days out of the `digests/` root into `digests/heard/`. **Nothing is deleted.**
+
+**Skipping it costs nothing immediate.** A stale link stays a stale link, and an aged digest just sits in the
+root. So do not schedule it alongside the nightly compile. Run it by hand when you are deliberately looking
+at the brain rather than using it, which is also the moment a skill sweep belongs.
+
+If you do want it scheduled, use the same option you picked above, on a monthly trigger. `/maintain` asks
+questions — contradictions and skill candidates need your judgment — so an unattended run leaves those in the
+report and fixes only what is safe.
 
 ## Whichever option: verify the loop monthly
 

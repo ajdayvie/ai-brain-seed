@@ -148,8 +148,8 @@ method only in a surface's memory and call it saved.**
 
 ## 6. `/brain-skill` and its three modes
 
-Four verbs move knowledge: capture, process, pull, maintain. **`/brain-skill` turns a repeated method into a
-skill.** It is backed by a vault skill named `skill-library`.
+Five verbs move knowledge: capture, process, pull, maintain, digest. **`/brain-skill` turns a repeated
+method into a skill.** It is backed by a vault skill named `skill-library`.
 
 The command is named `brain-skill` and not `skill` so it does not collide with other skill-building commands
 you may already have installed.

@@ -32,7 +32,7 @@ has no home here. New tags are added at process time, by proposing them here fir
 
 - `brain` — this knowledge base itself, its architecture and its storage.
 - `knowledge-management` — methods and concepts for personal knowledge work.
-- `workflow` — capture, process, pull, maintain, and other methods.
+- `workflow` — capture, process, pull, maintain, digest, and other methods.
 
 ### Starter subjects
 

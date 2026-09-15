@@ -164,6 +164,33 @@ pure-instruction skills belong there. Every other store needs an install on each
 skill store at all**, so a method reaches ChatGPT as a custom GPT or as instruction text that the owner
 refreshes by hand whenever the master changes. The full treatment is in `docs/skills.md`.
 
+### 9. The digest: an interface onto the knowledge, not a record of it
+
+The wiki is written to be **read**. Some knowledge is easier to take in while driving, walking, or away from
+a screen, and reading a wiki page aloud does not work — it is dense, full of links and paths, and written
+for eyes that can skim back.
+
+So `/digest` writes a different artifact from the same material: a **spoken-word script**, 600 to 900 words,
+plus a pre-rendered MP3. It sits in `digests/`, outside the golden flow.
+
+**The line that makes this safe is that a digest is an interface, never a record.** The wiki holds what is
+true. A digest holds one explanation of it, shaped for ears. Three rules follow, and each one exists because
+the alternative corrupts something:
+
+- **A digest is not a capture.** Durable knowledge still goes to `inbox/`. A spoken restatement is a
+  presentation of a source, not a source.
+- **Process never reads `digests/`.** Compiling lossy prose back into the wiki would put something that was
+  never the source into the source of truth. That is the failure this rule exists to prevent, and it is the
+  one that would be hardest to detect afterward.
+- **It is never offered proactively.** An offer that fires in normal use is noise, and noise trains the
+  owner to ignore the channel.
+
+Digests age out of the root at 60 days into `heard/`, and **nothing is deleted**. That is a deliberate
+choice with a real cost: `heard/` grows without bound at roughly two megabytes per digest. The alternative —
+deleting after a window — was rejected because a listened-to explanation is sometimes the only place an
+argument was ever phrased well, and the system should not throw that away on a timer. An owner who wants a
+delete step adds it knowingly.
+
 ## Key design decisions, consolidated
 
 | Decision | Why | Trade-off accepted |
@@ -177,6 +204,10 @@ refreshes by hand whenever the master changes. The full treatment is in `docs/sk
 | LLM owns the wiki | The whole point — the agent curates, the human reviews | Requires trust + periodic maintenance passes |
 | Self-sufficient notes | The compile sees only the vault, so a note that points outward is unfileable | Capture takes a few more words than a bare link |
 | Library beside the vault, not inside it | A tool is not knowledge. Methods inside a knowledge base blur what the brain is | A second folder to sync and to install on each machine |
+| Digests outside the golden flow | A spoken restatement is an interface, not a source. Compiling one into the wiki would corrupt the source of truth | A second place to look, and one the compile deliberately ignores |
+| Digests are never deleted | A well-phrased explanation is sometimes the only good phrasing of an argument | `heard/` grows without bound, about two megabytes per digest |
+| A versioned kit with migrations | A vault built a year ago can gain new verbs without a reinstall or a rebuild | The kit must ship a tested migration per release, and it must never overwrite an edited file |
+
 ## The governance chain
 
 The documents form a deliberate chain from thin-and-always-loaded to deep-and-on-demand:
@@ -190,7 +221,9 @@ The documents form a deliberate chain from thin-and-always-loaded to deep-and-on
 | `wiki/_tags.md` | The controlled subject vocabulary |
 | `wiki/_index.md` | Catalog — *what exists* |
 | `wiki/_log.md` | Append-only journal — *what changed* |
+| `digests/_catalog.md` | What there is to listen to — an index onto the wiki, not part of it |
 | `.claude/INSTALL.md` | The per-machine runbook: how skills copy from the vault into `~/.claude/` |
+| `.claude/VERSION.md` | Which kit version built this vault, and every update applied since |
 | `<library>/CONVENTIONS.md` | The skill contract: where a master lives, how far it reaches, provenance, packaging traps, what is not a skill |
 
 Index vs log is an easy thing to confuse: `_index.md` answers "what's in here?", `_log.md` answers "what
@@ -215,3 +248,7 @@ step. A client that copies a rule inline goes stale the day the vault changes, a
   a missing-detail one, and it is flagged in `_log.md` for the human. A note carried more than twice is a
   filing bug, not a safe outcome.
 - The AI offers to capture at natural stopping points. It never captures silently and never nags.
+- Never compile a digest into the wiki, and never let a digest stand in for a capture. A digest is never
+  offered — the owner asks for it.
+- An update never costs the owner knowledge. It never overwrites a file they edited, and it never touches
+  `wiki/` page content, `inbox/`, `raw/`, `outputs/`, or `digests/`.
