@@ -38,15 +38,32 @@ is current, then go to Step 1.
 **If it is not**, get the kit one of two ways.
 
 1. **Clone it** to a scratch directory. The OS temp directory is fine, or any folder outside the vault.
+   **This is the route to prefer.** It gets every file byte-exact, at the right relative paths, and a later
+   update is one `git pull`.
 
    ```bash
    git clone --depth 1 https://github.com/ajdayvie/ai-brain-seed.git <scratch>/ai-brain-seed
    ```
 
-2. **No git, or the clone is blocked** — fetch the raw files you need over HTTPS from
-   `https://raw.githubusercontent.com/ajdayvie/ai-brain-seed/main/<path>`. Fetch `VERSION` and
-   `CHANGELOG.md` first, then only the migration documents Step 4 selects, then only the seed files those
-   migrations name. Do not try to mirror the whole repository this way.
+2. **No git, or the clone is blocked** — download the individual files you need over HTTPS from
+   `https://raw.githubusercontent.com/ajdayvie/ai-brain-seed/main/<path>`.
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/ajdayvie/ai-brain-seed/main/VERSION -o <scratch>/VERSION
+   ```
+
+   On Windows PowerShell, `Invoke-WebRequest -Uri <url> -OutFile <path>` does the same. `curl.exe` also
+   ships with Windows 10 and later.
+
+   Get `VERSION` and `CHANGELOG.md` first. Then only the migration documents Step 4 selects. Then only the
+   seed files those migrations name — for 0.3.0 that is about ten files, and the migration lists every one.
+   Do not try to mirror the whole repository this way.
+
+   **WARNING: download the bytes. Do not use a web-browsing or page-reading tool to read a file's contents
+   and retype them.** Skill files, commands, and the renderer script are copied into the vault **verbatim**.
+   A tool that renders, summarizes, or reflows a page will silently change whitespace, fences, and long
+   lines, and a skill file damaged that way fails in ways that are hard to trace back here. If the only
+   route available cannot write a byte-exact file, stop and tell the owner to clone instead.
 
 **WARNING: the clone must never land inside the vault, and you must never run git inside the vault.** The
 vault is git-free forever — cloud sync is its versioning layer. A `.git` folder in a synced vault is a sync

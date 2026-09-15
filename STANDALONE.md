@@ -2421,7 +2421,12 @@ that is expected, and the kit's runbook knows how to handle it.
 The kit is <https://github.com/ajdayvie/ai-brain-seed>.
 
 If this session already has a clone of it, use that and `git pull` first. Otherwise clone it shallow into a
-scratch folder, or fetch the raw files over HTTPS if git is unavailable.
+scratch folder. **Prefer the clone** — it gets every file byte-exact and makes the next update one `git
+pull`.
+
+Without git, download the individual files with `curl -fsSL <raw url> -o <path>`, per `UPDATES.md` Step 0.
+**Download the bytes.** Skill files and the renderer script are copied into the vault verbatim, so a
+page-reading tool that reflows the content corrupts them silently.
 
 **The clone must never land inside `<brain>`, and you must never run git inside `<brain>`.** The vault is
 git-free forever. Cloud sync is its versioning layer.
